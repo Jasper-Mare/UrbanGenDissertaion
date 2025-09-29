@@ -28,3 +28,13 @@ https://www.citygen.net/files/citygen_gdtw07.pdf
 Delft University of Technology, The Netherlands
 
 https://dl.acm.org/doi/pdf/10.1145/2422956.2422957
+
+### Procedural content generation in games (Book)
+* Shaker, Noor, author.
+
+2016
+
+### Automatic Generation of Dungeons for Computer Games
+* David Adams
+
+https://dn721807.ca.archive.org/0/items/automatic-generation-of-dungeons-david-adams-20020528/Automatic%20Generation%20of%20Dungeons.pdf
