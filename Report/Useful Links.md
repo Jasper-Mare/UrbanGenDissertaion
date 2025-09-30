@@ -3,6 +3,8 @@
 ### CityGen.net
 https://www.citygen.net
 
+# Overviews:
+
 ### A Survey of Procedural Techniques for City Generation
 * George Kelly: kellygp@gmail.com,
 * Hugh McCabe: hugh.mccabe@itb.ie,
@@ -12,16 +14,6 @@ ITB, Dublin, Ireland
 Covers base level procedural generation techinques, then their applications to existing approaches for procedural city generation. Shows many useful techinques around city generation.
 
 https://www.citygen.net/files/Procedural_City_Generation_Survey.pdf
-
-### Citygen: An Interactive System for Procedural City Generation
-* George Kelly: kellygp@gmail.com,
-* Hugh McCabe: hugh.mccabe@itb.ie,
-
-Department of Informatics, Institute of Technology Blanchardstown, Ireland
-
-Covers methods of road generation and snapping, plot splitting, and building generation.
-
-https://www.citygen.net/files/citygen_gdtw07.pdf
 
 ### Procedural Content Generation for Games: A Survey
 * MARK HENDRIKX,
@@ -42,23 +34,6 @@ Contains a selection of different approaches for procedural generation of game c
 
 https://librarysearch.exeter.ac.uk/discovery/fulldisplay?docid=alma9910841993405136&context=v2v&vid=44UOEX_INST:default&lang=en&search_scope=44UOEX&adaptor=Primo%20VE%20Deep%20Search&tab=44UOE&query=any,contains,procedural%20generation
 
-### Automatic Generation of Dungeons for Computer Games
-* David Adams
-
-Focuses on graph grammar systems for procedural dungeon generation.
-
-https://dn721807.ca.archive.org/0/items/automatic-generation-of-dungeons-david-adams-20020528/Automatic%20Generation%20of%20Dungeons.pdf
-
-### Procedural Generation of Roads
-* E. Galin,
-* A. Peytavie,
-* N. Maréchal,
-* E. Guérin,
-
-Generates roads over a  pre-existing landscape using a cost constraint algorithm, including landscape manipulation, building tunnels and bridges.
-
-https://onlinelibrary.wiley.com/doi/full/10.1111/j.1467-8659.2009.01612.x
-
 ### Procedural Content Generation for Games (2020)
 * M.Sc. Jonas Freiknecht
 
@@ -76,3 +51,44 @@ https://madoc.bib.uni-mannheim.de/59000/1/Procedural%20Content%20Generation%20fo
 A recent paper that surveys existing methods.
 
 https://ieeexplore.ieee.org/abstract/document/9898527
+
+### Deep learning for procedural content generation (2021)
+* Jialin Liu,
+* Sam Snodgrass,
+* Ahmed Khalifa,
+* Sebastian Risi,
+* Georgios N. Yannakakis,
+* Julian Togelius
+
+A review of Machine Learning aproaches to procedural generation
+
+https://link.springer.com/article/10.1007/s00521-020-05383-8
+
+# Aproaches:
+
+### Citygen: An Interactive System for Procedural City Generation
+* George Kelly: kellygp@gmail.com,
+* Hugh McCabe: hugh.mccabe@itb.ie,
+
+Department of Informatics, Institute of Technology Blanchardstown, Ireland
+
+Covers methods of road generation and snapping, plot splitting, and building generation.
+
+https://www.citygen.net/files/citygen_gdtw07.pdf
+
+### Automatic Generation of Dungeons for Computer Games
+* David Adams
+
+Focuses on graph grammar systems for procedural dungeon generation.
+
+https://dn721807.ca.archive.org/0/items/automatic-generation-of-dungeons-david-adams-20020528/Automatic%20Generation%20of%20Dungeons.pdf
+
+### Procedural Generation of Roads
+* E. Galin,
+* A. Peytavie,
+* N. Maréchal,
+* E. Guérin,
+
+Generates roads over a  pre-existing landscape using a cost constraint algorithm, including landscape manipulation, building tunnels and bridges.
+
+https://onlinelibrary.wiley.com/doi/full/10.1111/j.1467-8659.2009.01612.x
