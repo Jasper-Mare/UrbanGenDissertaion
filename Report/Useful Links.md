@@ -34,6 +34,8 @@ https://dl.acm.org/doi/pdf/10.1145/2422956.2422957
 
 2016
 
+https://librarysearch.exeter.ac.uk/discovery/fulldisplay?docid=alma9910841993405136&context=v2v&vid=44UOEX_INST:default&lang=en&search_scope=44UOEX&adaptor=Primo%20VE%20Deep%20Search&tab=44UOE&query=any,contains,procedural%20generation
+
 ### Automatic Generation of Dungeons for Computer Games
 * David Adams
 
