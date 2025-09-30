@@ -35,7 +35,7 @@ Focuses more on identifying types of game content and which existing methods of 
 
 https://dl.acm.org/doi/pdf/10.1145/2422956.2422957
 
-### Procedural content generation in games (Book) 2016
+### Procedural content generation in games (Book) (2016)
 * Shaker, Noor, author.
 
 Contains a selection of different approaches for procedural generation of game content.
@@ -58,3 +58,21 @@ https://dn721807.ca.archive.org/0/items/automatic-generation-of-dungeons-david-a
 Generates roads over a  pre-existing landscape using a cost constraint algorithm, including landscape manipulation, building tunnels and bridges.
 
 https://onlinelibrary.wiley.com/doi/full/10.1111/j.1467-8659.2009.01612.x
+
+### Procedural Content Generation for Games (2020)
+* M.Sc. Jonas Freiknecht
+
+Universitat Mannheim
+
+A recent paper that covers road generation among other uses.
+
+https://madoc.bib.uni-mannheim.de/59000/1/Procedural%20Content%20Generation%20for%20Games.pdf
+
+### A Survey of Procedural Content Generation for Games (2022)
+* Yuzhong Zhang - Macau University of Science and Technology
+* Guixuan Zhang - Institute of Automation, Chinese Academy of Sciences
+* Xinyuan Huang - Macau University of Science and Technology
+
+A recent paper that surveys existing methods.
+
+https://ieeexplore.ieee.org/abstract/document/9898527
