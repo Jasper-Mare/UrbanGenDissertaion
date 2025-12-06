@@ -1,6 +1,30 @@
-﻿namespace CityGenerator.FlowFields {
+﻿using Unity.Mathematics;
+
+namespace CityGenerator.FlowFields {
     class TensorField {
-        Tensor[,] tensors;
+        int Width, Height;
+        float2x2[,] tensors;
+
+        public TensorField(int w, int h) {
+            Width = w;
+            Height = h;
+            tensors = new float2x2[w, h];
+
+        }
+
+        public void ApplyGridBasisField() {
+
+        }
+
+        public void ApplyRadialBasisField() {
+
+        }
+
+        public void ApplyBoundryField() {
+
+        }
+
+
     }
 }
 
@@ -160,6 +184,10 @@ I can also provide:
 ✅ code to integrate streamlines to generate streets
 
 Just tell me what you want next!
+
+
+
+
 
 
 how do the basis Fields described in the paper turn into the final tensor field?
