@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CityGenerator.MeshUtilities {
 
-    public static class Mesher {
+    public static class BezierMesher {
 
         // based off [1]
         public static void ExtrudeMesh(Mesh mesh, OutlineShape outline, OrientedPoint[] path) {

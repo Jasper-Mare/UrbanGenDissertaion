@@ -36,7 +36,7 @@ public class TestScript : MonoBehaviour {
         BezierCurve curve = new BezierCurve( splinePoints.Select(t => t.position).ToArray() );
         OrientedPoint[] points = curve.SampleOrientedPoints(sampleStep);
 
-        Mesher.ExtrudeMesh(MeshObject.Mesh, outline, points);
+        BezierMesher.ExtrudeMesh(MeshObject.Mesh, outline, points);
 
     }
 

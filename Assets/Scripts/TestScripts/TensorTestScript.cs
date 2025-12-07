@@ -1,63 +1,96 @@
 ﻿using CityGenerator.FlowFields;
+using CityGenerator.MeshUtilities;
 using Unity.Mathematics;
 using UnityEngine;
 
+[RequireComponent(typeof(UniqueMesh), typeof(MeshRenderer))]
 public class TensorTestScript : MonoBehaviour {
-    [SerializeField]
-    [Range(0, 10)]
-    float R = 0;
 
     [SerializeField]
-    [Range(0.1f, 10)]
-    float lambda = 0;
+    int xSize = 10, zSize = 10;
 
     [SerializeField]
-    [Range(0, math.PI2)]
-    float theta = 0;
+    bool updateMesh = false;
+
+    private TensorField field;
+    private Mesh mesh;
 
     void Start() {
-        TensorField field = new TensorField(10, 10);
+        mesh = GetComponent<UniqueMesh>().Mesh;
+
+        field = new TensorField(xSize, zSize);
+        field.ApplyGridBasisField(new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f), Vector2.left, 1);
+        CreateMesh(mesh);
+
     }
 
     void Update() {
-        float2x2 matrix = CalcMatrix();
 
-        float2 a = Vector2.up;
-        float2 b = Vector2.right;
-        float2 e = new Vector2(-1, 1);
+        if (updateMesh) {
 
-        float2 f = CalcMajor();
-        float2 g = CalcMinor();
+            field = new TensorField(xSize, zSize);
+            field.ApplyGridBasisField(new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f), Vector2.left, 1);
+            CreateMesh(mesh);
 
-        Debug.DrawRay(Vector3.zero, (Vector2)math.mul(matrix, a), Color.red);
-        Debug.DrawRay(Vector3.zero, (Vector2)math.mul(b, matrix), Color.green);
-        Debug.DrawRay(Vector3.zero, (Vector2)math.mul(e, matrix), Color.black);
+            updateMesh = false;
+        }
+    }
 
-        Debug.DrawRay(Vector3.zero, (Vector2)math.mul(f, matrix), Color.blue);
-        Debug.DrawRay(Vector3.zero, (Vector2)math.mul(g, matrix), Color.yellow);
+    void CreateMesh(Mesh mesh) {
+
+        const float uvScale = 0.1f;
+
+        int vertCount = xSize * zSize;
+        int triIndexCount = (xSize - 1) * (zSize - 1) * 6;
+
+        Vector3[] vertices     = new Vector3[ vertCount ];
+        int[] triangleIndices  = new int[ triIndexCount ];
+        Vector3[] normals      = new Vector3[ vertCount ];
+        Vector2[] uvs          = new Vector2[ vertCount ];
+        Color[] colors         = new Color[vertices.Length];
+
+        for (int i = 0, z = 0; z < zSize; z++) {
+            for (int x = 0; x < xSize; x++, i++) {
+                vertices[i] = new Vector3(x, 0, z);
+                normals[i] = Vector3.up;
+                uvs[i] = new Vector2((x * uvScale) % 1, (z * uvScale) % 1);
+
+                // TODO: remember to change this
+                float2 major = field[x, z].c0;
+                float2 minor = field[x, z].c1;
+                colors[i] = new Color(major.x, major.y, minor.x, minor.y);
+
+                //Debug.DrawRay(vertices[i], normals[i]*0.1f, Color.magenta, 1000);
+            }
+        }
+
+        for (int ti = 0, vi = 0, z = 0; z < zSize - 1; z++, vi++) {
+            for (int x = 0; x < xSize - 1; x++, ti += 6, vi++) {
+                triangleIndices[ti] = vi;
+                triangleIndices[ti + 3] = triangleIndices[ti + 2] = vi + 1;
+                triangleIndices[ti + 4] = triangleIndices[ti + 1] = vi + xSize;
+                triangleIndices[ti + 5] = vi + xSize + 1;
+            }
+        }
+
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangleIndices;
+        mesh.normals = normals;
+        mesh.uv = uvs;
+        mesh.colors = colors;
+
 
     }
 
-    float2x2 CalcMatrix() {
-
-        float theta2 = 2*theta;
-
-        float2x2 matrix = R * new float2x2(
-            math.cos(theta2), math.sin(theta2),
-            math.sin(theta2), -math.cos(theta2)
-        );
-
-        return matrix;
-    }
-
-    float2 CalcMajor() {
-        return new float2(math.cos(theta), math.sin(theta)) * lambda;
-    }
-
-    float2 CalcMinor() {
-        return new float2(math.cos(theta + math.PIHALF), math.sin(theta + math.PIHALF)) * lambda;
-    }
 }
+
+/*
+
+https://stackoverflow.com/questions/65661496/how-to-get-vertex-colors-working-in-unity-project
+https://catlikecoding.com/unity/tutorials/procedural-grid/
+
+*/
 
 /*
 in unity c# how do I apply a float2x2 (matrix) to a float2 (vector)?

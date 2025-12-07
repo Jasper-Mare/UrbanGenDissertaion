@@ -1,8 +1,9 @@
-﻿using Unity.Mathematics;
+﻿using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 
 namespace CityGenerator.FlowFields {
     class TensorField {
-        int Width, Height;
+        readonly public int Width, Height;
         float2x2[,] tensors;
 
         public TensorField(int w, int h) {
@@ -12,8 +13,27 @@ namespace CityGenerator.FlowFields {
 
         }
 
-        public void ApplyGridBasisField() {
+        public float2x2 this[int x, int y] {
+            get { return tensors[x, y]; }
+        }
 
+        // perhaps for parrallelism these apply methods could be turned into compute shaders? at least for large fields
+        public void ApplyGridBasisField(float2 location, float2 direction, float length) {
+            float theta = math.atan2(direction.x, direction.y);
+
+            float sin = math.sin(2 * theta);
+            float cos = math.cos(2 * theta);
+
+            float2x2 basis = new float2x2(
+                cos, sin,
+                sin,-cos
+            ) * length;
+
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+                    CombineTensor(i, j, basis, location);
+                }
+            }
         }
 
         public void ApplyRadialBasisField() {
@@ -24,7 +44,16 @@ namespace CityGenerator.FlowFields {
 
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void CombineTensor(int i, int j, float2x2 tensor, float2 location) {
+            const float decayConst = 0.6f;
 
+            // c^2 = a^2 + b^2
+            float a = (location.x - i);
+            float b = (location.y - j);
+            float distSq = a*a + b*b;
+            tensors[i, j] += tensor * math.exp(-decayConst * distSq);
+        }
     }
 }
 
