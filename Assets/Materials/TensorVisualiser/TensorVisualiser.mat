@@ -51,8 +51,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _NoiseScale: 30.13
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _VectorStrength: 0.67
     - _patternFrequency: 10
     - _tensorStrength: 1
     m_Colors: []

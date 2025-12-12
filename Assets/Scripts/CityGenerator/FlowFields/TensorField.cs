@@ -18,9 +18,7 @@ namespace CityGenerator.FlowFields {
         }
 
         // perhaps for parrallelism these apply methods could be turned into compute shaders? at least for large fields
-        public void ApplyGridBasisField(float2 location, float2 direction, float length) {
-            float theta = math.atan2(direction.x, direction.y);
-
+        public void ApplyGridBasisField(float2 location, float theta, float length) {
             float sin = math.sin(2 * theta);
             float cos = math.cos(2 * theta);
 
@@ -36,8 +34,24 @@ namespace CityGenerator.FlowFields {
             }
         }
 
-        public void ApplyRadialBasisField() {
+        public void ApplyRadialBasisField(float2 location) {
 
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+                    float dx = i - location.x;
+                    float dy = j - location.y;
+
+                    float a = dy * dy - dx * dx;
+                    float b = -2 * dx * dy;
+
+                    float2x2 basis = new float2x2(
+                        a, b,
+                        b,-a
+                    );
+
+                    CombineTensor(i, j, basis, location);
+                }
+            }
         }
 
         public void ApplyBoundryField() {
@@ -46,7 +60,7 @@ namespace CityGenerator.FlowFields {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CombineTensor(int i, int j, float2x2 tensor, float2 location) {
-            const float decayConst = 0.6f;
+            const float decayConst = 0.01f;
 
             // c^2 = a^2 + b^2
             float a = (location.x - i);
@@ -56,6 +70,18 @@ namespace CityGenerator.FlowFields {
         }
     }
 }
+
+/*
+References:
+[1] G. Chen, G. Esch, P. Wonka, P. M¨uller, and E. Zhang, “Interactive procedural street modeling,”
+    in ACM SIGGRAPH 2008 papers, ser. SIGGRAPH ’08. New York, NY, USA: Association for
+    Computing Machinery, Aug. 2008, pp. 1–10. DOI:10.1145/1399504.1360702
+
+[2] E. Zhang, J. Hays and G. Turk, "Interactive Tensor Field Design and Visualization on Surfaces,"
+    in IEEE Transactions on Visualization and Computer Graphics, 
+    vol. 13, no. 1, pp. 94-107, Jan.-Feb. 2007, doi: 10.1109/TVCG.2007.16.
+
+
 
 /*
 In "Interactive Procedural Street Modeling" by Chen et al they use a tensor field, how should these tensors and tensor fields be represented in code?

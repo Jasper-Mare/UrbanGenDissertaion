@@ -1,0 +1,6 @@
+﻿
+https://ieeexplore.ieee.org/document/4015401
+E. Zhang, J. Hays and G. Turk, "Interactive Tensor Field Design and Visualization on Surfaces," in IEEE Transactions on Visualization and Computer Graphics, vol. 13, no. 1, pp. 94-107, Jan.-Feb. 2007, doi: 10.1109/TVCG.2007.16.
+
+https://vanwijk.win.tue.nl/ibfv/ibfv_sample.pdf
+https://github.com/SwayambhuNathRay/Flow-Visualisation-OpenGL

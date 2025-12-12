@@ -17,10 +17,7 @@ public class TensorTestScript : MonoBehaviour {
 
     void Start() {
         mesh = GetComponent<UniqueMesh>().Mesh;
-
-        field = new TensorField(xSize, zSize);
-        field.ApplyGridBasisField(new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f), Vector2.left, 1);
-        CreateMesh(mesh);
+        updateMesh = true;
 
     }
 
@@ -29,7 +26,8 @@ public class TensorTestScript : MonoBehaviour {
         if (updateMesh) {
 
             field = new TensorField(xSize, zSize);
-            field.ApplyGridBasisField(new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f), Vector2.left, 1);
+            //field.ApplyGridBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f), math.radians(60), 2);
+            field.ApplyRadialBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f));
             CreateMesh(mesh);
 
             updateMesh = false;
@@ -53,14 +51,14 @@ public class TensorTestScript : MonoBehaviour {
             for (int x = 0; x < xSize; x++, i++) {
                 vertices[i] = new Vector3(x, 0, z);
                 normals[i] = Vector3.up;
-                uvs[i] = new Vector2((x * uvScale) % 1, (z * uvScale) % 1);
+                uvs[i] = new Vector2((x * uvScale), (z * uvScale));
 
-                // TODO: remember to change this
-                float2 major = field[x, z].c0;
-                float2 minor = field[x, z].c1;
-                colors[i] = new Color(major.x, major.y, minor.x, minor.y);
+                float2 major = Tensor.getMajorEigenVector(field[x, z]);
+                float2 minor = Tensor.getMinorEigenVector(field[x, z]);
+                colors[i] = new Color(major.x, major.y, minor.x, minor.y); // map -1 to 1 to 0 to 1
 
-                //Debug.DrawRay(vertices[i], normals[i]*0.1f, Color.magenta, 1000);
+                Debug.DrawRay(vertices[i] + Vector3.up, new Vector3(major.x, 0, major.y), Color.black, 300);
+                Debug.DrawRay(vertices[i] + Vector3.up, new Vector3(minor.x, 0, minor.y), Color.blue, 300);
             }
         }
 
