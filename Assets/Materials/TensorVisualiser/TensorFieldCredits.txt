@@ -5,3 +5,8 @@ E. Zhang, J. Hays and G. Turk, "Interactive Tensor Field Design and Visualizatio
 https://vanwijk.win.tue.nl/ibfv/ibfv_sample.pdf
 https://github.com/SwayambhuNathRay/Flow-Visualisation-OpenGL
 
+https://observablehq.com/@citrus-lemon/ibfv
+http://www.zhanpingliu.org/Research/FlowVis/Systems/ActiveIBFV/ActiveIBFV.htm
+https://www.researchgate.net/figure/The-process-of-implementing-the-principle-of-the-IBFV-algorithm_fig3_373031246
+
+

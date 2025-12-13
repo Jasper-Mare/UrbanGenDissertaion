@@ -431,6 +431,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xSize: 100
   zSize: 100
+  decayConst: 0.001
   updateMesh: 0
 --- !u!23 &448460280
 MeshRenderer:

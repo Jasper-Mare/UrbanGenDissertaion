@@ -38,10 +38,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _NoiseScale: 10
+    - _MajorOrMinor: 0
+    - _NoiseScale: 30.85
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _VectorStrength: 1
+    - _VectorStrength: 5
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

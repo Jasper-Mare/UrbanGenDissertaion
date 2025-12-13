@@ -5,6 +5,7 @@ namespace CityGenerator.FlowFields {
     class TensorField {
         readonly public int Width, Height;
         float2x2[,] tensors;
+        public float decayConst = 0.01f;
 
         public TensorField(int w, int h) {
             Width = w;
@@ -117,7 +118,6 @@ namespace CityGenerator.FlowFields {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CombineTensor(int i, int j, float2x2 tensor, float2 location) {
-            const float decayConst = 0.01f;
 
             // c^2 = a^2 + b^2
             float a = (location.x - i);
@@ -130,7 +130,7 @@ namespace CityGenerator.FlowFields {
 
 /*
 References:
-[1] G. Chen, G. Esch, P. Wonka, P. M¨uller, and E. Zhang, “Interactive procedural street modeling,”
+[1] G. Chen, G. Esch, P. Wonka, P. Muller, and E. Zhang, “Interactive procedural street modeling,”
     in ACM SIGGRAPH 2008 papers, ser. SIGGRAPH ’08. New York, NY, USA: Association for
     Computing Machinery, Aug. 2008, pp. 1–10. DOI:10.1145/1399504.1360702
 

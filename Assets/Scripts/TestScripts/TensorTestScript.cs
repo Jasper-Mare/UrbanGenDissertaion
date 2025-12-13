@@ -10,6 +10,9 @@ public class TensorTestScript : MonoBehaviour {
     int xSize = 10, zSize = 10;
 
     [SerializeField]
+    float decayConst = 0.0005f;
+
+    [SerializeField]
     bool updateMesh = false;
 
     private TensorField field;
@@ -26,11 +29,13 @@ public class TensorTestScript : MonoBehaviour {
         if (updateMesh) {
 
             field = new TensorField(xSize, zSize);
-            field.ApplyGridBasisField(new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f), math.radians(60), 2);
-            // field.ApplyCenterBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f));
-            // field.ApplyNodeBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f));
-            // field.ApplySaddleBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.75f));
-            // field.ApplyTrisectorBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.25f));
+            field.decayConst = decayConst;
+            // field.ApplyGridBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f), math.radians(60), 2);
+            // field.ApplyGridBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f), math.radians(30), 2);
+            field.ApplyCenterBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f));
+            field.ApplyNodeBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f));
+            field.ApplySaddleBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.75f));
+            field.ApplyTrisectorBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.25f));
             CreateMesh(mesh);
 
             updateMesh = false;
@@ -49,6 +54,12 @@ public class TensorTestScript : MonoBehaviour {
         Vector3[] normals      = new Vector3[ vertCount ];
         Vector2[] uvs          = new Vector2[ vertCount ];
         Color[] colors         = new Color[vertices.Length];
+
+        Vector2 centre = new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f);
+        float2x2 rot90 = new float2x2(
+            0, 1,
+            -1, 0
+        );
 
         for (int i = 0, z = 0; z < zSize; z++) {
             for (int x = 0; x < xSize; x++, i++) {
