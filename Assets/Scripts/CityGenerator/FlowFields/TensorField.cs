@@ -34,7 +34,27 @@ namespace CityGenerator.FlowFields {
             }
         }
 
-        public void ApplyRadialBasisField(float2 location) {
+        public void ApplyNodeBasisField(float2 location) {
+
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+                    float dx = i - location.x;
+                    float dy = j - location.y;
+
+                    float a = dx * dx - dy * dy;
+                    float b = 2 * dx * dy;
+
+                    float2x2 basis = new float2x2(
+                        a, b,
+                        b,-a
+                    );
+
+                    CombineTensor(i, j, basis, location);
+                }
+            }
+        }
+
+        public void ApplyCenterBasisField(float2 location) {
 
             for (int i = 0; i < Width; i++) {
                 for (int j = 0; j < Height; j++) {
@@ -47,6 +67,43 @@ namespace CityGenerator.FlowFields {
                     float2x2 basis = new float2x2(
                         a, b,
                         b,-a
+                    );
+
+                    CombineTensor(i, j, basis, location);
+                }
+            }
+        }
+
+        public void ApplySaddleBasisField(float2 location) {
+
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+                    float dx = i - location.x;
+                    float dy = j - location.y;
+
+                    float a = dy * dy - dx * dx;
+                    float b = -2 * dx * dy;
+
+                    float2x2 basis = new float2x2(
+                        a, b,
+                        b,-a
+                    );
+
+                    CombineTensor(i, j, basis, location);
+                }
+            }
+        }
+
+        public void ApplyTrisectorBasisField(float2 location) {
+
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+                    float dx = i - location.x;
+                    float dy = j - location.y;
+
+                    float2x2 basis = new float2x2(
+                        dx, -dy,
+                        -dy,-dx
                     );
 
                     CombineTensor(i, j, basis, location);

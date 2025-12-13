@@ -26,8 +26,11 @@ public class TensorTestScript : MonoBehaviour {
         if (updateMesh) {
 
             field = new TensorField(xSize, zSize);
-            //field.ApplyGridBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f), math.radians(60), 2);
-            field.ApplyRadialBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f));
+            field.ApplyGridBasisField(new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f), math.radians(60), 2);
+            // field.ApplyCenterBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f));
+            // field.ApplyNodeBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f));
+            // field.ApplySaddleBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.75f));
+            // field.ApplyTrisectorBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.25f));
             CreateMesh(mesh);
 
             updateMesh = false;
@@ -55,7 +58,7 @@ public class TensorTestScript : MonoBehaviour {
 
                 float2 major = Tensor.getMajorEigenVector(field[x, z]);
                 float2 minor = Tensor.getMinorEigenVector(field[x, z]);
-                colors[i] = new Color(major.x, major.y, minor.x, minor.y); // map -1 to 1 to 0 to 1
+                colors[i] = new Color(major.x * 0.5f + 0.5f, major.y * 0.5f + 0.5f, minor.x * 0.5f + 0.5f, minor.y * 0.5f + 0.5f); // map -1 to 1 to 0 to 1
 
                 Debug.DrawRay(vertices[i] + Vector3.up, new Vector3(major.x, 0, major.y), Color.black, 300);
                 Debug.DrawRay(vertices[i] + Vector3.up, new Vector3(minor.x, 0, minor.y), Color.blue, 300);
