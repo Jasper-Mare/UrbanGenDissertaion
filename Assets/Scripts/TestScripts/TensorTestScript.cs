@@ -71,8 +71,10 @@ public class TensorTestScript : MonoBehaviour {
                 float2 minor = Tensor.getMinorEigenVector(field[x, z]);
                 colors[i] = new Color(major.x * 0.5f + 0.5f, major.y * 0.5f + 0.5f, minor.x * 0.5f + 0.5f, minor.y * 0.5f + 0.5f); // map -1 to 1 to 0 to 1
 
-                Debug.DrawRay(vertices[i] + Vector3.up, new Vector3(major.x, 0, major.y), Color.black, 300);
-                Debug.DrawRay(vertices[i] + Vector3.up, new Vector3(minor.x, 0, minor.y), Color.blue, 300);
+                Vector3 majorVisOff = new Vector3(major.x, 0, major.y) * 0.8f;
+                Vector3 minorVisOff = new Vector3(minor.x, 0, minor.y) * 0.8f;
+                Debug.DrawLine(vertices[i] + Vector3.up + majorVisOff, vertices[i] + Vector3.up - majorVisOff, Color.black, 300);
+                Debug.DrawLine(vertices[i] + Vector3.up + minorVisOff, vertices[i] + Vector3.up - minorVisOff, Color.blue, 300);
             }
         }
 
