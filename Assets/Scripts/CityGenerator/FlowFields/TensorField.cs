@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 namespace CityGenerator.FlowFields {
     class TensorField {
@@ -124,6 +126,40 @@ namespace CityGenerator.FlowFields {
             float b = (location.y - j);
             float distSq = a*a + b*b;
             tensors[i, j] += tensor * math.exp(-decayConst * distSq);
+        }
+
+        public void Visualise(RenderTexture targetTexture, Material visualiserMat, float passes = 1) {
+
+            // Generate and provide a texture encoding the eigenvectors
+
+            Texture2D flowEncoding = new Texture2D(Width, Height);
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+
+                    float2 major = Tensor.getMajorEigenVector(tensors[i, j]);
+                    float2 minor = Tensor.getMinorEigenVector(tensors[i, j]);
+
+                    major = major * 0.5f + 0.5f;
+                    minor = minor * 0.5f + 0.5f;
+
+                    flowEncoding.SetPixel(i, j, new Color(major.x, major.y, minor.x, minor.y));
+                }
+            }
+            flowEncoding.Apply();
+
+            // could maybe optimise by swapping out to use nameid
+            visualiserMat.SetTexture("_FlowField", flowEncoding);
+
+            // Render the visualiser texture
+
+            Texture2D startTexture = Texture2D.whiteTexture;
+            startTexture.Reinitialize(targetTexture.width, targetTexture.height, GraphicsFormatUtility.GetGraphicsFormat(targetTexture.format, targetTexture.isDataSRGB), targetTexture.useMipMap);
+
+            Graphics.Blit(startTexture, targetTexture, visualiserMat);
+            for (int i = 0; i < passes - 1; i++) {
+                Graphics.Blit(targetTexture, targetTexture, visualiserMat);
+            }
+
         }
     }
 }

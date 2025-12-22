@@ -392,9 +392,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 448460278}
-  - component: {fileID: 448460281}
   - component: {fileID: 448460280}
   - component: {fileID: 448460279}
+  - component: {fileID: 448460281}
   m_Layer: 0
   m_Name: test obj
   m_TagString: Untagged
@@ -432,7 +432,9 @@ MonoBehaviour:
   xSize: 100
   zSize: 100
   decayConst: 0.001
+  numPasses: 1
   updateMesh: 0
+  visualierMaterial: {fileID: 2100000, guid: 2da64f58934ba3d4f9d8be2a62462735, type: 2}
 --- !u!23 &448460280
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -458,7 +460,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: bc1c1ee03edacad4b9f63d0b3a59deb6, type: 2}
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -482,18 +484,14 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &448460281
-MonoBehaviour:
+--- !u!33 &448460281
+MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 448460276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed4fbc01d2adecc4a82b1f34a11f077a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
