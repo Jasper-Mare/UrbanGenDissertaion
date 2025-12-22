@@ -58,16 +58,16 @@ public class TensorTestScript : MonoBehaviour {
     }
 
     void DebugFlow() {
-        for (int z = 0; z < zSize; z++) {
-            for (int x = 0; x < xSize; x++) {
-                Vector3 vertex = new Vector3(x, 0, z);
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < zSize; j++) {
+                Vector3 vertex = new Vector3(i, 0, j);
 
-                float2 major = Tensor.getMajorEigenVector(field[x, z]);
-                float2 minor = Tensor.getMinorEigenVector(field[x, z]);
+                float2 major = Tensor.getMajorEigenVector(field[i, j]);
+                float2 minor = Tensor.getMinorEigenVector(field[i, j]);
                 //colors[i] = new Color(major.x * 0.5f + 0.5f, major.y * 0.5f + 0.5f, minor.x * 0.5f + 0.5f, minor.y * 0.5f + 0.5f); // map -1 to 1 to 0 to 1
 
-                Vector3 majorVisOff = new Vector3(major.x, 0, major.y) * 0.8f;
-                Vector3 minorVisOff = new Vector3(minor.x, 0, minor.y) * 0.8f;
+                Vector3 majorVisOff = new Vector3(major.x, 0, major.y) * 0.6f;
+                Vector3 minorVisOff = new Vector3(minor.x, 0, minor.y) * 0.3f;
                 Debug.DrawLine(vertex + Vector3.up + majorVisOff, vertex + Vector3.up - majorVisOff, Color.black, 300);
                 Debug.DrawLine(vertex + Vector3.up + minorVisOff, vertex + Vector3.up - minorVisOff, Color.blue, 300);
             }

@@ -150,6 +150,8 @@ namespace CityGenerator.FlowFields {
             // could maybe optimise by swapping out to use nameid
             visualiserMat.SetTexture("_FlowField", flowEncoding);
 
+            Debug.Log("Set flow field texture " + flowEncoding.width + " : " + flowEncoding.height);
+
             // Render the visualiser texture
 
             Texture2D startTexture = Texture2D.whiteTexture;
@@ -159,6 +161,8 @@ namespace CityGenerator.FlowFields {
             for (int i = 0; i < passes - 1; i++) {
                 Graphics.Blit(targetTexture, targetTexture, visualiserMat);
             }
+
+            Debug.Log("Completed building the visualisation " + targetTexture.width + " : " + targetTexture.height);
 
         }
     }
