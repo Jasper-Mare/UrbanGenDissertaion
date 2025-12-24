@@ -50,7 +50,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Major_or_Minor: 1
+    - _Major_or_Minor: 0
     - _Persistance: 0.5
     - _Primary_Influence: 40
     - _QueueControl: 0

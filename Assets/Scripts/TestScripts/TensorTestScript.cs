@@ -1,8 +1,9 @@
 ﻿using CityGenerator.FlowFields;
+using CityGenerator.MeshUtilities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshRenderer), typeof(UniqueMesh))]
 public class TensorTestScript : MonoBehaviour {
 
     [SerializeField]
@@ -15,32 +16,38 @@ public class TensorTestScript : MonoBehaviour {
     int numPasses = 1;
 
     [SerializeField]
-    bool updateMesh = false;
+    bool updateVisualisation = false;
 
     [SerializeField]
     Material visualierMaterial;
 
     private TensorField field;
-    //private Mesh mesh;
+    private Mesh mesh;
     private Renderer rend;
     private RenderTexture rendText;
+    private Material displayMatInstance;
+    [SerializeField]
+    private Material visMatInstance;
 
     void Start() {
-        //mesh = GetComponent<UniqueMesh>().Mesh;
+        mesh = GetComponent<UniqueMesh>().Mesh;
         rend = GetComponent<Renderer>();
 
-        updateMesh = true;
+        MeshCreator.CreatePlane(mesh, xSize, zSize);
+
+        updateVisualisation = true;
 
         // [3]
-        rendText = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
-        rendText.useDynamicScale = true;
+        rendText = new RenderTexture(512, 512, 0, RenderTextureFormat.ARGB32);
         rendText.Create();
-        rend.sharedMaterial.mainTexture = rendText;
+        (displayMatInstance = rend.material).mainTexture = rendText;
+
+        visMatInstance = new Material(visualierMaterial);
     }
 
     void Update() {
 
-        if (updateMesh) {
+        if (updateVisualisation) {
 
             field = new TensorField(xSize, zSize);
             field.decayConst = decayConst;
@@ -51,79 +58,35 @@ public class TensorTestScript : MonoBehaviour {
             field.ApplySaddleBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.75f));
             field.ApplyTrisectorBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.25f));
             DebugFlow();
-            field.Visualise(rendText, visualierMaterial, numPasses);
+            field.Visualise(rendText, visMatInstance, numPasses);
 
-            updateMesh = false;
+            updateVisualisation = false;
         }
     }
 
     void DebugFlow() {
         for (int i = 0; i < xSize; i++) {
             for (int j = 0; j < zSize; j++) {
-                Vector3 vertex = new Vector3(i, 0, j);
+                Vector3 pos = new Vector3(i + 0.5f, 0.25f, j + 0.5f);
 
                 float2 major = Tensor.getMajorEigenVector(field[i, j]);
                 float2 minor = Tensor.getMinorEigenVector(field[i, j]);
-                //colors[i] = new Color(major.x * 0.5f + 0.5f, major.y * 0.5f + 0.5f, minor.x * 0.5f + 0.5f, minor.y * 0.5f + 0.5f); // map -1 to 1 to 0 to 1
 
                 Vector3 majorVisOff = new Vector3(major.x, 0, major.y) * 0.6f;
                 Vector3 minorVisOff = new Vector3(minor.x, 0, minor.y) * 0.3f;
-                Debug.DrawLine(vertex + Vector3.up + majorVisOff, vertex + Vector3.up - majorVisOff, Color.black, 300);
-                Debug.DrawLine(vertex + Vector3.up + minorVisOff, vertex + Vector3.up - minorVisOff, Color.blue, 300);
+                Debug.DrawLine(pos + majorVisOff, pos - majorVisOff, Color.green, 300);
+                Debug.DrawLine(pos + minorVisOff, pos - minorVisOff, Color.blue, 300);
             }
         }
     }
 
-    //void CreateMesh(Mesh mesh) {
-
-    //    float uvScale = 1.0f / math.max(xSize, zSize);
-
-    //    int vertCount = xSize * zSize;
-    //    int triIndexCount = (xSize - 1) * (zSize - 1) * 6;
-
-    //    Vector3[] vertices     = new Vector3[ vertCount ];
-    //    int[] triangleIndices  = new int[ triIndexCount ];
-    //    Vector3[] normals      = new Vector3[ vertCount ];
-    //    Vector2[] uvs          = new Vector2[ vertCount ];
-    //    Color[] colors         = new Color[vertices.Length];
-
-    //    Vector2 centre = new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f);
-    //    float2x2 rot90 = new float2x2(
-    //        0, 1,
-    //        -1, 0
-    //    );
-
-    //    for (int i = 0, z = 0; z < zSize; z++) {
-    //        for (int x = 0; x < xSize; x++, i++) {
-    //            vertices[i] = new Vector3(x, 0, z);
-    //            normals[i] = Vector3.up;
-    //            uvs[i] = new Vector2((x * uvScale), (z * uvScale));
-
-    //            float2 major = Tensor.getMajorEigenVector(field[x, z]);
-    //            float2 minor = Tensor.getMinorEigenVector(field[x, z]);
-    //            //colors[i] = new Color(major.x * 0.5f + 0.5f, major.y * 0.5f + 0.5f, minor.x * 0.5f + 0.5f, minor.y * 0.5f + 0.5f); // map -1 to 1 to 0 to 1
-
-    //        }
-    //    }
-
-    //    for (int ti = 0, vi = 0, z = 0; z < zSize - 1; z++, vi++) {
-    //        for (int x = 0; x < xSize - 1; x++, ti += 6, vi++) {
-    //            triangleIndices[ti] = vi;
-    //            triangleIndices[ti + 3] = triangleIndices[ti + 2] = vi + 1;
-    //            triangleIndices[ti + 4] = triangleIndices[ti + 1] = vi + xSize;
-    //            triangleIndices[ti + 5] = vi + xSize + 1;
-    //        }
-    //    }
-
-    //    mesh.Clear();
-    //    mesh.vertices = vertices;
-    //    mesh.triangles = triangleIndices;
-    //    mesh.normals = normals;
-    //    mesh.uv = uvs;
-    //    mesh.colors = colors;
-
-
-    //}
+    // [4]
+    void OnDestroy() {
+        Destroy(displayMatInstance);
+        Destroy(visMatInstance);
+        rendText.Release();
+        Destroy(rendText);
+    }
 
 }
 
@@ -132,6 +95,7 @@ public class TensorTestScript : MonoBehaviour {
 https://stackoverflow.com/questions/65661496/how-to-get-vertex-colors-working-in-unity-project
 https://catlikecoding.com/unity/tutorials/procedural-grid/
 [3] https://stackoverflow.com/questions/75737648/is-it-possible-to-add-a-render-texture-to-a-gameobject-through-a-script
+[4] https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Renderer-material.html
 */
 
 /*

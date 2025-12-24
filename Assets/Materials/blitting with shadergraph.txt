@@ -1,0 +1,9 @@
+﻿
+
+blit with passes set to zero
+https://discussions.unity.com/t/graphics-blit-always-outputting-1-on-red-and-alpha-channels/944039
+Graphics.Blit(firstView, renderTexture, processMat, 0);
+
+
+set the reference of the main texture to:
+_MainTex

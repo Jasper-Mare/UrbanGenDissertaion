@@ -157,10 +157,29 @@ namespace CityGenerator.FlowFields {
             Texture2D startTexture = Texture2D.whiteTexture;
             startTexture.Reinitialize(targetTexture.width, targetTexture.height, GraphicsFormatUtility.GetGraphicsFormat(targetTexture.format, targetTexture.isDataSRGB), targetTexture.useMipMap);
 
-            Graphics.Blit(startTexture, targetTexture, visualiserMat);
+            // use double buffers to avoid unexpected behaviour when blitting one render texture to itself
+            RenderTexture bufferA = new RenderTexture(targetTexture.width, targetTexture.height, 0);
+            RenderTexture bufferB = new RenderTexture(targetTexture.width, targetTexture.height, 0);
+            bufferA.Create();
+            bufferB.Create();
+
+            Graphics.Blit(startTexture, bufferA, visualiserMat, 0);
             for (int i = 0; i < passes - 1; i++) {
-                Graphics.Blit(targetTexture, targetTexture, visualiserMat);
+                if (i % 2 == 0) {
+                    Graphics.Blit(bufferA, bufferB, visualiserMat, 0);
+                } else {
+                    Graphics.Blit(bufferB, bufferA, visualiserMat, 0);
+                }
             }
+
+            if (passes % 2 == 0) {
+                Graphics.Blit(bufferA, targetTexture);
+            } else {
+                Graphics.Blit(bufferB, targetTexture);
+            }
+
+            Object.Destroy(bufferA);
+            Object.Destroy(bufferB);
 
             Debug.Log("Completed building the visualisation " + targetTexture.width + " : " + targetTexture.height);
 
