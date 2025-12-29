@@ -26,7 +26,7 @@ public class TensorTestScript : MonoBehaviour {
     private Renderer rend;
     private RenderTexture rendText;
     private Material displayMatInstance;
-    [SerializeField]
+    //[SerializeField]
     private Material visMatInstance;
 
     void Start() {

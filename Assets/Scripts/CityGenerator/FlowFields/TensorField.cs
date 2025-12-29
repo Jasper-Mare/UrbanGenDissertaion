@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 
 namespace CityGenerator.FlowFields {
     class TensorField {
@@ -130,6 +129,10 @@ namespace CityGenerator.FlowFields {
 
         public void Visualise(RenderTexture targetTexture, Material visualiserMat, float passes = 1) {
 
+            if (passes < 1) {
+                return;
+            }
+
             // Generate and provide a texture encoding the eigenvectors
 
             Texture2D flowEncoding = new Texture2D(Width, Height);
@@ -154,17 +157,18 @@ namespace CityGenerator.FlowFields {
 
             // Render the visualiser texture
 
-            Texture2D startTexture = Texture2D.whiteTexture;
-            startTexture.Reinitialize(targetTexture.width, targetTexture.height, GraphicsFormatUtility.GetGraphicsFormat(targetTexture.format, targetTexture.isDataSRGB), targetTexture.useMipMap);
-
             // use double buffers to avoid unexpected behaviour when blitting one render texture to itself
             RenderTexture bufferA = new RenderTexture(targetTexture.width, targetTexture.height, 0);
             RenderTexture bufferB = new RenderTexture(targetTexture.width, targetTexture.height, 0);
             bufferA.Create();
             bufferB.Create();
 
-            Graphics.Blit(startTexture, bufferA, visualiserMat, 0);
-            for (int i = 0; i < passes - 1; i++) {
+            //RenderTexture.active = bufferB;
+            //GL.Clear(true, true, Color.black);
+            //RenderTexture.active = null;
+
+            //Graphics.Blit(bufferB, bufferA, visualiserMat, 0);
+            for (int i = 0; i < passes; i++) {
                 if (i % 2 == 0) {
                     Graphics.Blit(bufferA, bufferB, visualiserMat, 0);
                 } else {
@@ -197,7 +201,7 @@ References:
     in IEEE Transactions on Visualization and Computer Graphics, 
     vol. 13, no. 1, pp. 94-107, Jan.-Feb. 2007, doi: 10.1109/TVCG.2007.16.
 
-
+[3] http://www.zhanpingliu.org/Research/FlowVis/Systems/ActiveIBFV/ActiveIBFV.htm
 
 /*
 In "Interactive Procedural Street Modeling" by Chen et al they use a tensor field, how should these tensors and tensor fields be represented in code?

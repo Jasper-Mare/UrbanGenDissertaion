@@ -435,7 +435,6 @@ MonoBehaviour:
   numPasses: 1
   updateVisualisation: 0
   visualierMaterial: {fileID: 2100000, guid: 2da64f58934ba3d4f9d8be2a62462735, type: 2}
-  visMatInstance: {fileID: 0}
 --- !u!23 &448460280
 MeshRenderer:
   m_ObjectHideFlags: 0

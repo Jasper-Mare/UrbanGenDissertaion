@@ -28,6 +28,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -51,7 +55,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Major_or_Minor: 0
-    - _Persistance: 0.5
+    - _Persistance: 0.81
     - _Primary_Influence: 40
     - _QueueControl: 0
     - _QueueOffset: 0
