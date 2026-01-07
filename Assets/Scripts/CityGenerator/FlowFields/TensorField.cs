@@ -152,6 +152,7 @@ namespace CityGenerator.FlowFields {
 
             // could maybe optimise by swapping out to use nameid
             visualiserMat.SetTexture("_FlowField", flowEncoding);
+            visualiserMat.SetVector("_Number_Of_Tensors_X_Y", new Vector4(Width, Height));
 
             Debug.Log("Set flow field texture " + flowEncoding.width + " : " + flowEncoding.height);
 
@@ -163,17 +164,16 @@ namespace CityGenerator.FlowFields {
             bufferA.Create();
             bufferB.Create();
 
-            //RenderTexture.active = bufferB;
-            //GL.Clear(true, true, Color.black);
-            //RenderTexture.active = null;
-
-            //Graphics.Blit(bufferB, bufferA, visualiserMat, 0);
             for (int i = 0; i < passes; i++) {
                 if (i % 2 == 0) {
                     Graphics.Blit(bufferA, bufferB, visualiserMat, 0);
                 } else {
                     Graphics.Blit(bufferB, bufferA, visualiserMat, 0);
                 }
+
+                RenderTextureUtils.SaveRTToFile(bufferB, "bufferA " + i);
+                RenderTextureUtils.SaveRTToFile(bufferA, "bufferB " + i);
+
             }
 
             if (passes % 2 == 0) {

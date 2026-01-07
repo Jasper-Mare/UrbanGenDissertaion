@@ -56,12 +56,12 @@ Material:
     m_Floats:
     - _Major_or_Minor: 0
     - _Persistance: 0.81
-    - _Primary_Influence: 40
+    - _Primary_Influence: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Secondary_Influence: 1
+    - _Secondary_Influence: 0.2
     m_Colors:
-    - _Texture_Scale: {r: 0.02, g: 0.02, b: 0, a: 0}
+    - _Texture_Scale: {r: 0.2, g: 0.2, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1758922950029699597
