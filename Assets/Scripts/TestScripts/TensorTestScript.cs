@@ -13,9 +13,6 @@ public class TensorTestScript : MonoBehaviour {
     float decayConst = 0.0005f;
 
     [SerializeField]
-    int numPasses = 1;
-
-    [SerializeField]
     bool updateVisualisation = false;
 
     [SerializeField]
@@ -24,9 +21,6 @@ public class TensorTestScript : MonoBehaviour {
     private TensorField field;
     private Mesh mesh;
     private Renderer rend;
-    private RenderTexture rendText;
-    private Material displayMatInstance;
-    //[SerializeField]
     private Material visMatInstance;
 
     void Start() {
@@ -37,12 +31,8 @@ public class TensorTestScript : MonoBehaviour {
 
         updateVisualisation = true;
 
-        // [3]
-        rendText = new RenderTexture(512, 512, 0, RenderTextureFormat.ARGB32);
-        rendText.Create();
-        (displayMatInstance = rend.material).mainTexture = rendText;
-
         visMatInstance = new Material(visualierMaterial);
+        rend.material = visMatInstance;
     }
 
     void Update() {
@@ -50,15 +40,16 @@ public class TensorTestScript : MonoBehaviour {
         if (updateVisualisation) {
 
             field = new TensorField(xSize, zSize);
+            MeshCreator.CreatePlane(mesh, xSize, zSize);
             field.decayConst = decayConst;
-            //field.ApplyGridBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f), math.radians(60), 2);
+            field.ApplyGridBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f), math.radians(60), 2);
             //field.ApplyGridBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f), math.radians(30), 2);
             field.ApplyCenterBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.25f));
             //field.ApplyNodeBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.75f));
             //field.ApplySaddleBasisField(new float2((xSize - 1) * 0.25f, (zSize - 1) * 0.75f));
             //field.ApplyTrisectorBasisField(new float2((xSize - 1) * 0.75f, (zSize - 1) * 0.25f));
             DebugFlow();
-            field.Visualise(rendText, visMatInstance, numPasses);
+            field.Visualise(visMatInstance);
 
             updateVisualisation = false;
         }
@@ -82,10 +73,7 @@ public class TensorTestScript : MonoBehaviour {
 
     // [4]
     void OnDestroy() {
-        Destroy(displayMatInstance);
         Destroy(visMatInstance);
-        rendText.Release();
-        Destroy(rendText);
     }
 
 }
@@ -94,7 +82,7 @@ public class TensorTestScript : MonoBehaviour {
 
 https://stackoverflow.com/questions/65661496/how-to-get-vertex-colors-working-in-unity-project
 https://catlikecoding.com/unity/tutorials/procedural-grid/
-[3] https://stackoverflow.com/questions/75737648/is-it-possible-to-add-a-render-texture-to-a-gameobject-through-a-script
+https://stackoverflow.com/questions/75737648/is-it-possible-to-add-a-render-texture-to-a-gameobject-through-a-script
 [4] https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Renderer-material.html
 */
 

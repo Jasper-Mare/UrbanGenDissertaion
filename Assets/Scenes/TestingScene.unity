@@ -432,7 +432,6 @@ MonoBehaviour:
   xSize: 100
   zSize: 100
   decayConst: 0.001
-  numPasses: 1
   updateVisualisation: 0
   visualierMaterial: {fileID: 2100000, guid: 25c7d4db30ceec346954309fb25bee0f, type: 2}
 --- !u!23 &448460280
@@ -459,8 +458,7 @@ MeshRenderer:
   m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: -876546973899608171, guid: 2476a2d151e824143af40dce1fc93a12, type: 3}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

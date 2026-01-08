@@ -127,6 +127,30 @@ namespace CityGenerator.FlowFields {
             tensors[i, j] += tensor * math.exp(-decayConst * distSq);
         }
 
+        public void Visualise(Material visualiserMat) {
+            // Generate and provide a texture encoding the eigenvectors
+
+            Texture2D flowEncoding = new Texture2D(Width, Height);
+            for (int i = 0; i < Width; i++) {
+                for (int j = 0; j < Height; j++) {
+
+                    float2 major = Tensor.getMajorEigenVector(tensors[i, j]);
+                    float2 minor = Tensor.getMinorEigenVector(tensors[i, j]);
+
+                    major = major * 0.5f + 0.5f;
+                    minor = minor * 0.5f + 0.5f;
+
+                    flowEncoding.SetPixel(i, j, new Color(major.x, major.y, minor.x, minor.y));
+                }
+            }
+            flowEncoding.Apply();
+
+            // could maybe optimise by swapping out to use nameid
+            visualiserMat.SetTexture("_FlowField", flowEncoding);
+            visualiserMat.SetVector("_Number_Of_Tensors_X_Y", new Vector4(Width, Height));
+        }
+
+        /* OLD!!!
         public void Visualise(RenderTexture targetTexture, Material visualiserMat, float passes = 1) {
 
             if (passes < 1) {
@@ -188,6 +212,7 @@ namespace CityGenerator.FlowFields {
             Debug.Log("Completed building the visualisation " + targetTexture.width + " : " + targetTexture.height);
 
         }
+        */
     }
 }
 

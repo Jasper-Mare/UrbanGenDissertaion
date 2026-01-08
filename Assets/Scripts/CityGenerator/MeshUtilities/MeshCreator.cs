@@ -10,7 +10,7 @@ namespace CityGenerator.MeshUtilities {
             => CreatePlane(mesh, xSize, zSize, numVertsX, numVertsZ, Vector3.zero);
         public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numVertsX, int numVertsZ, Vector3 origin) {
 
-            float uvScale = 1.0f / math.max(numVertsX, numVertsZ);
+            float uvScale = 1.0f / math.max(numVertsX - 1, numVertsZ - 1);
             float xScale = xSize / (float)numVertsX;
             float zScale = zSize / (float)numVertsZ;
 
