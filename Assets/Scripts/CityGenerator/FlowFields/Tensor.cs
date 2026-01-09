@@ -16,10 +16,11 @@ namespace CityGenerator.FlowFields {
         public static float2 getMajorEigenVector(float2x2 tensor) {
             float t = getAngle(tensor);
             return new float2(math.cos(t), math.sin(t));
+
         }
 
         public static float2 getMinorEigenVector(float2x2 tensor) {
-            float t = getAngle(tensor) + math.PIHALF;
+            float t = getAngle(tensor) + math.PIHALF; // PIHALF can be changed to be altered by a rotation field later
             return new float2(math.cos(t), math.sin(t));
         }
 

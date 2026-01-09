@@ -431,6 +431,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xSize: 100
   zSize: 100
+  angle: 60
   decayConst: 0.001
   updateVisualisation: 0
   visualierMaterial: {fileID: 2100000, guid: 25c7d4db30ceec346954309fb25bee0f, type: 2}

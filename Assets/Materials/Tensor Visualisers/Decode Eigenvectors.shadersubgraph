@@ -382,7 +382,7 @@
     "m_ObjectId": "330887150c7e4a718410c8ee6ca0607f",
     "m_Title": "Decode EigenVectors",
     "m_Position": {
-        "x": -605.9999389648438,
+        "x": -606.0,
         "y": -362.0000305175781
     }
 }
@@ -855,8 +855,8 @@
     "m_ObjectId": "6e51d873635b48cda5bead0e28522cdb",
     "m_Title": "Major Eigenvector",
     "m_Position": {
-        "x": 415.00006103515627,
-        "y": -104.00003051757813
+        "x": 415.0,
+        "y": -104.00001525878906
     }
 }
 
@@ -920,8 +920,8 @@
     "m_ObjectId": "73cda8bac98a407792bab5464cefe993",
     "m_Title": "Minor Eigenvector",
     "m_Position": {
-        "x": 421.00006103515627,
-        "y": 111.99996185302735
+        "x": 421.0,
+        "y": 112.00003051757813
     }
 }
 

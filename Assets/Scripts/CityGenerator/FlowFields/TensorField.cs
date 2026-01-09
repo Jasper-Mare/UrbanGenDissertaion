@@ -130,15 +130,24 @@ namespace CityGenerator.FlowFields {
         public void Visualise(Material visualiserMat) {
             // Generate and provide a texture encoding the eigenvectors
 
-            Texture2D flowEncoding = new Texture2D(Width, Height);
+            // [4] need linear to be false to stop unity from manipulating the data values
+            Texture2D flowEncoding = new Texture2D(Width, Height, textureFormat: TextureFormat.RGBAFloat, mipChain: false, linear: false); // [4]
             for (int i = 0; i < Width; i++) {
                 for (int j = 0; j < Height; j++) {
 
                     float2 major = Tensor.getMajorEigenVector(tensors[i, j]);
                     float2 minor = Tensor.getMinorEigenVector(tensors[i, j]);
 
+                    if (i == 0 && j == 0) {
+                        Debug.Log("pixel (0,0) has major angle " + math.degrees(math.atan2(major.y, major.x)));
+                    }
+
                     major = major * 0.5f + 0.5f;
                     minor = minor * 0.5f + 0.5f;
+
+                    if (i == 0 && j == 0) {
+                        Debug.Log("pixel (0,0) is " + major + " , " + minor);
+                    }
 
                     flowEncoding.SetPixel(i, j, new Color(major.x, major.y, minor.x, minor.y));
                 }
@@ -227,6 +236,8 @@ References:
     vol. 13, no. 1, pp. 94-107, Jan.-Feb. 2007, doi: 10.1109/TVCG.2007.16.
 
 [3] http://www.zhanpingliu.org/Research/FlowVis/Systems/ActiveIBFV/ActiveIBFV.htm
+
+[4] https://thegreatpug.com/help/srgb/
 
 /*
 In "Interactive Procedural Street Modeling" by Chen et al they use a tensor field, how should these tensors and tensor fields be represented in code?
