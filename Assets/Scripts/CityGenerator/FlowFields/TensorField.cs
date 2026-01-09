@@ -138,43 +138,6 @@ namespace CityGenerator.FlowFields {
                     float2 major = Tensor.getMajorEigenVector(tensors[i, j]);
                     float2 minor = Tensor.getMinorEigenVector(tensors[i, j]);
 
-                    if (i == 0 && j == 0) {
-                        Debug.Log("pixel (0,0) has major angle " + math.degrees(math.atan2(major.y, major.x)));
-                    }
-
-                    major = major * 0.5f + 0.5f;
-                    minor = minor * 0.5f + 0.5f;
-
-                    if (i == 0 && j == 0) {
-                        Debug.Log("pixel (0,0) is " + major + " , " + minor);
-                    }
-
-                    flowEncoding.SetPixel(i, j, new Color(major.x, major.y, minor.x, minor.y));
-                }
-            }
-            flowEncoding.Apply();
-
-            // could maybe optimise by swapping out to use nameid
-            visualiserMat.SetTexture("_FlowField", flowEncoding);
-            visualiserMat.SetVector("_Number_Of_Tensors_X_Y", new Vector4(Width, Height));
-        }
-
-        /* OLD!!!
-        public void Visualise(RenderTexture targetTexture, Material visualiserMat, float passes = 1) {
-
-            if (passes < 1) {
-                return;
-            }
-
-            // Generate and provide a texture encoding the eigenvectors
-
-            Texture2D flowEncoding = new Texture2D(Width, Height);
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
-
-                    float2 major = Tensor.getMajorEigenVector(tensors[i, j]);
-                    float2 minor = Tensor.getMinorEigenVector(tensors[i, j]);
-
                     major = major * 0.5f + 0.5f;
                     minor = minor * 0.5f + 0.5f;
 
@@ -186,42 +149,8 @@ namespace CityGenerator.FlowFields {
             // could maybe optimise by swapping out to use nameid
             visualiserMat.SetTexture("_FlowField", flowEncoding);
             visualiserMat.SetVector("_Number_Of_Tensors_X_Y", new Vector4(Width, Height));
-
-            Debug.Log("Set flow field texture " + flowEncoding.width + " : " + flowEncoding.height);
-
-            // Render the visualiser texture
-
-            // use double buffers to avoid unexpected behaviour when blitting one render texture to itself
-            RenderTexture bufferA = new RenderTexture(targetTexture.width, targetTexture.height, 0);
-            RenderTexture bufferB = new RenderTexture(targetTexture.width, targetTexture.height, 0);
-            bufferA.Create();
-            bufferB.Create();
-
-            for (int i = 0; i < passes; i++) {
-                if (i % 2 == 0) {
-                    Graphics.Blit(bufferA, bufferB, visualiserMat, 0);
-                } else {
-                    Graphics.Blit(bufferB, bufferA, visualiserMat, 0);
-                }
-
-                RenderTextureUtils.SaveRTToFile(bufferB, "bufferA " + i);
-                RenderTextureUtils.SaveRTToFile(bufferA, "bufferB " + i);
-
-            }
-
-            if (passes % 2 == 0) {
-                Graphics.Blit(bufferA, targetTexture);
-            } else {
-                Graphics.Blit(bufferB, targetTexture);
-            }
-
-            Object.Destroy(bufferA);
-            Object.Destroy(bufferB);
-
-            Debug.Log("Completed building the visualisation " + targetTexture.width + " : " + targetTexture.height);
-
         }
-        */
+
     }
 }
 
