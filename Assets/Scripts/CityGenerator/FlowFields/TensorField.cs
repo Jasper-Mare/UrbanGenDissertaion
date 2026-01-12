@@ -83,7 +83,7 @@ namespace CityGenerator.FlowFields {
                     float dx = i - location.x;
                     float dy = j - location.y;
 
-                    float a = dy * dy - dx * dx;
+                    float a = dx * dx - dy * dy;
                     float b = -2 * dx * dy;
 
                     float2x2 basis = new float2x2(
