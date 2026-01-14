@@ -353,7 +353,7 @@
     "m_Title": "Decode EigenVectors",
     "m_Position": {
         "x": -522.0,
-        "y": -362.0000305175781
+        "y": -362.0
     }
 }
 
@@ -896,7 +896,7 @@
     "m_Title": "Minor Eigenvector",
     "m_Position": {
         "x": 421.0,
-        "y": 112.00006103515625
+        "y": 112.0
     }
 }
 

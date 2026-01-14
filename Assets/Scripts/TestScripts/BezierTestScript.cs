@@ -24,7 +24,6 @@ public class TestScript : MonoBehaviour {
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
-        Debug.Log("hello world");
         updateMesh();
     }
 
@@ -36,7 +35,7 @@ public class TestScript : MonoBehaviour {
         BezierCurve curve = new BezierCurve( splinePoints.Select(t => t.position).ToArray() );
         OrientedPoint[] points = curve.SampleOrientedPoints(sampleStep);
 
-        BezierMesher.ExtrudeMesh(MeshObject.Mesh, outline, points);
+        MeshCreator.ExtrudeMeshAlongBezier(MeshObject.Mesh, outline, points);
 
     }
 

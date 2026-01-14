@@ -1,18 +1,24 @@
-﻿using System.Runtime.CompilerServices;
+﻿using CityGenerator.MeshUtilities;
+using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace CityGenerator.FlowFields {
     class TensorField {
-        readonly public int Width, Height;
+        readonly public float2 position;
+        readonly public float width, height;
+        readonly public int numTensorsX, numTensorsY;
         float2x2[,] tensors;
         public float decayConst = 0.01f;
 
-        public TensorField(int w, int h) {
-            Width = w;
-            Height = h;
-            tensors = new float2x2[w, h];
-
+        public TensorField(int tensorsX, int tensorsY) =>
+            new TensorField(float2.zero, tensorsX, tensorsY, tensorsX, tensorsY);
+        public TensorField(float2 pos, float width, float height, int tensorsX, int tensorsY) {
+            numTensorsX = tensorsX;
+            this.width = width;
+            numTensorsY = tensorsY;
+            this.height = height;
+            tensors = new float2x2[tensorsX, tensorsY];
         }
 
         public float2x2 this[int x, int y] {
@@ -20,17 +26,17 @@ namespace CityGenerator.FlowFields {
         }
 
         // perhaps for parrallelism these apply methods could be turned into compute shaders? at least for large fields
-        public void ApplyGridBasisField(float2 location, float theta, float length) {
-            float sin = math.sin(2 * theta);
-            float cos = math.cos(2 * theta);
+        public void ApplyGridBasisField(float2 location, float angle, float length) {
+            float sin = math.sin(2 * angle);
+            float cos = math.cos(2 * angle);
 
             float2x2 basis = new float2x2(
                 cos, sin,
                 sin,-cos
             ) * length;
 
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
+            for (int i = 0; i < numTensorsX; i++) {
+                for (int j = 0; j < numTensorsY; j++) {
                     CombineTensor(i, j, basis, location);
                 }
             }
@@ -38,8 +44,8 @@ namespace CityGenerator.FlowFields {
 
         public void ApplyNodeBasisField(float2 location) {
 
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
+            for (int i = 0; i < numTensorsX; i++) {
+                for (int j = 0; j < numTensorsY; j++) {
                     float dx = i - location.x;
                     float dy = j - location.y;
 
@@ -58,8 +64,8 @@ namespace CityGenerator.FlowFields {
 
         public void ApplyCenterBasisField(float2 location) {
 
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
+            for (int i = 0; i < numTensorsX; i++) {
+                for (int j = 0; j < numTensorsY; j++) {
                     float dx = i - location.x;
                     float dy = j - location.y;
 
@@ -78,8 +84,8 @@ namespace CityGenerator.FlowFields {
 
         public void ApplySaddleBasisField(float2 location) {
 
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
+            for (int i = 0; i < numTensorsX; i++) {
+                for (int j = 0; j < numTensorsY; j++) {
                     float dx = i - location.x;
                     float dy = j - location.y;
 
@@ -98,8 +104,8 @@ namespace CityGenerator.FlowFields {
 
         public void ApplyTrisectorBasisField(float2 location) {
 
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
+            for (int i = 0; i < numTensorsX; i++) {
+                for (int j = 0; j < numTensorsY; j++) {
                     float dx = i - location.x;
                     float dy = j - location.y;
 
@@ -113,12 +119,20 @@ namespace CityGenerator.FlowFields {
             }
         }
 
-        public void ApplyBoundryField() {
+        public void ApplyBoundryField(OrientedPoint[] points) {
+            float2 previousPos = new float2(points[0].position.x, points[0].position.z);
+            foreach (OrientedPoint point in points) {
+                float2 thisPos = new float2(point.position.x, point.position.z);
 
+                ApplyGridBasisField(thisPos, math.radians(point.rotation.eulerAngles.z), ((Vector2)(previousPos - thisPos)).magnitude);
+
+                previousPos = thisPos;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CombineTensor(int i, int j, float2x2 tensor, float2 location) {
+            // might need to adjust "location" in future based off the position and size of the field
 
             // c^2 = a^2 + b^2
             float a = (location.x - i);
@@ -131,9 +145,9 @@ namespace CityGenerator.FlowFields {
             // Generate and provide a texture encoding the eigenvectors
 
             // [4] need linear to be false to stop unity from manipulating the data values
-            Texture2D flowEncoding = new Texture2D(Width, Height, textureFormat: TextureFormat.RGBAFloat, mipChain: false, linear: false); // [4]
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
+            Texture2D flowEncoding = new Texture2D(numTensorsX, numTensorsY, textureFormat: TextureFormat.RGBAFloat, mipChain: false, linear: false); // [4]
+            for (int i = 0; i < numTensorsX; i++) {
+                for (int j = 0; j < numTensorsY; j++) {
 
                     float2 major = Tensor.getMajorEigenVector(tensors[i, j]);
                     float2 minor = Tensor.getMinorEigenVector(tensors[i, j]);
@@ -148,7 +162,7 @@ namespace CityGenerator.FlowFields {
 
             // could maybe optimise by swapping out to use nameid
             visualiserMat.SetTexture("_FlowField", flowEncoding);
-            visualiserMat.SetVector("_Number_Of_Tensors_X_Y", new Vector4(Width, Height));
+            visualiserMat.SetVector("_Number_Of_Tensors_X_Y", new Vector4(numTensorsX, numTensorsY));
         }
 
     }

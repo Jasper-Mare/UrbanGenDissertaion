@@ -1,5 +1,7 @@
 ﻿using CityGenerator.FlowFields;
 using CityGenerator.MeshUtilities;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -13,6 +15,11 @@ public class TensorTestScript : MonoBehaviour {
     float angle = 0;
 
     [SerializeField]
+    Transform[] splinePoints;
+    [SerializeField]
+    float sampleStep;
+
+    [SerializeField]
     float decayConst = 0.0005f;
 
     [SerializeField]
@@ -22,7 +29,7 @@ public class TensorTestScript : MonoBehaviour {
     Material visualierMaterial;
 
     [SerializeField]
-    [Range(0, 4)]
+    [Range(0, 5)]
     int basisField = 0;
 
     private TensorField field;
@@ -30,16 +37,20 @@ public class TensorTestScript : MonoBehaviour {
     private Renderer rend;
     private Material visMatInstance;
 
+    private List<OrientedPoint> debugPoints;
+
     void Start() {
         mesh = GetComponent<UniqueMesh>().Mesh;
         rend = GetComponent<Renderer>();
 
-        MeshCreator.CreatePlane(mesh, xSize, zSize);
+        MeshCreator.CreatePlane(mesh, xSize, zSize, 2, 2);
 
         updateVisualisation = true;
 
         visMatInstance = new Material(visualierMaterial);
         rend.material = visMatInstance;
+
+        debugPoints = new List<OrientedPoint>();
     }
 
     void Update() {
@@ -67,11 +78,32 @@ public class TensorTestScript : MonoBehaviour {
                 case 4:
                 field.ApplyTrisectorBasisField(pos);
                 break;
+                case 5: {
+                    if (splinePoints.Length != 4) {
+                        break;
+                    }
+
+                    BezierCurve curve = new BezierCurve( splinePoints.Select(t => t.position).ToArray() );
+                    OrientedPoint[] points = curve.SampleOrientedPoints(sampleStep);
+
+                    debugPoints.Clear();
+                    debugPoints.AddRange(points);
+
+                    field.ApplyBoundryField(points);
+                }
+                break;
             }
             DebugFlow();
             field.Visualise(visMatInstance);
 
             updateVisualisation = false;
+        }
+
+        if (basisField == 5) {
+            foreach (OrientedPoint point in debugPoints) {
+                Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.right), Color.orange);
+                Debug.DrawRay(point.position, Vector3.up);
+            }
         }
     }
 

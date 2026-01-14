@@ -14,7 +14,7 @@ namespace CityGenerator.MeshUtilities {
             normals = pointNormals;
             textureCoords = textureUs;
             edges = edgePairs;
-            this.textureWidth = 0;
+            textureWidth = 0;
 
             for (int i = 0; i < edgePairs.Length; i += 2) {
                 int p1 = edgePairs[i];
