@@ -6,16 +6,19 @@ namespace CityGenerator.MeshUtilities {
 
         public static void CreatePlane(Mesh mesh, int xSize, int zSize)
             => CreatePlane(mesh, xSize, zSize, xSize + 1, zSize + 1);
-        public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numVertsX, int numVertsZ)
-            => CreatePlane(mesh, xSize, zSize, numVertsX, numVertsZ, Vector3.zero);
-        public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numVertsX, int numVertsZ, Vector3 origin) {
+        public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numQuadsX, int numQuadsZ)
+            => CreatePlane(mesh, xSize, zSize, numQuadsX, numQuadsZ, Vector3.zero);
+        public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numQuadsX, int numQuadsZ, Vector3 origin) {
 
-            float uvScale = 1.0f / math.max(numVertsX - 1, numVertsZ - 1);
-            float xScale = xSize / (float)numVertsX;
-            float zScale = zSize / (float)numVertsZ;
+            int numVertsX = numQuadsX + 1;
+            int numVertsZ = numQuadsZ + 1;
+
+            float uvScale = 1.0f / math.max(numQuadsX, numQuadsZ);
+            float xScale = xSize / (float)numQuadsX;
+            float zScale = zSize / (float)numQuadsZ;
 
             int vertCount = numVertsX * numVertsZ;
-            int triIndexCount = (numVertsX - 1) * (numVertsZ - 1) * 6;
+            int triIndexCount = numQuadsX * numQuadsZ * 6;
 
             Vector3[] vertices     = new Vector3[ vertCount ];
             int[] triangleIndices  = new int[ triIndexCount ];
@@ -25,7 +28,7 @@ namespace CityGenerator.MeshUtilities {
 
             for (int i = 0, z = 0; z < numVertsZ; z++) {
                 for (int x = 0; x < numVertsX; x++, i++) {
-                    vertices[i] = new Vector3(x, 0, z) - origin;
+                    vertices[i] = new Vector3(x * xScale, 0, z * zScale) - origin;
                     normals[i] = Vector3.up;
                     uvs[i] = new Vector2((x * uvScale), (z * uvScale));
 

@@ -43,7 +43,7 @@ public class TensorTestScript : MonoBehaviour {
         mesh = GetComponent<UniqueMesh>().Mesh;
         rend = GetComponent<Renderer>();
 
-        MeshCreator.CreatePlane(mesh, xSize, zSize, 2, 2);
+        MeshCreator.CreatePlane(mesh, xSize, zSize, 1, 1);
 
         updateVisualisation = true;
 
@@ -61,7 +61,7 @@ public class TensorTestScript : MonoBehaviour {
             MeshCreator.CreatePlane(mesh, xSize, zSize);
             field.decayConst = decayConst;
 
-            float2 pos = new float2((xSize - 1) * 0.5f, (zSize - 1) * 0.5f);
+            float2 pos = new float2(xSize * 0.5f, zSize * 0.5f);
             switch (basisField) {
                 case 0:
                 field.ApplyGridBasisField(pos, math.radians(angle), 2);

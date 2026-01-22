@@ -22,7 +22,28 @@ namespace CityGenerator.FlowFields {
         }
 
         public float2x2 this[int x, int y] {
-            get { return tensors[x, y]; }
+            get {
+                return tensors[x, y];
+            }
+        }
+
+        /// <summary>
+        /// Finds if the provided world position is in this field and if so returns it
+        /// </summary>
+        public bool TryGetTensor(float2 worldPos, out float2x2 value) {
+            float scaleX = numTensorsX / width;
+            float scaleY = numTensorsY / height;
+
+            int u = (int)((worldPos.x - position.x) * scaleX);
+            int v = (int)((worldPos.y - position.y) * scaleY);
+
+            if (u < 0 || numTensorsX >= u || v < 0 || numTensorsY >= v) {
+                value = float2x2.zero;
+                return false;
+            }
+
+            value = tensors[u, v];
+            return true;
         }
 
         // perhaps for parrallelism these apply methods could be turned into compute shaders? at least for large fields

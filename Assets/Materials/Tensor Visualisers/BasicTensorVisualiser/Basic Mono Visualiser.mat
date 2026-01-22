@@ -55,7 +55,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Line_Scale: 5
+    - _Line_Scale: 7.5
     - _Major_or_Minor: 0
     - _QueueControl: 0
     - _QueueOffset: 0
