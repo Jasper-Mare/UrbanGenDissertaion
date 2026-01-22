@@ -101,7 +101,7 @@ public class TensorTestScript : MonoBehaviour {
 
         if (basisField == 5) {
             foreach (OrientedPoint point in debugPoints) {
-                Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.right), Color.orange);
+                Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.forward), Color.orange);
                 Debug.DrawRay(point.position, Vector3.up);
             }
         }

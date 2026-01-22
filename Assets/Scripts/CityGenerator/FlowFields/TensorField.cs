@@ -11,9 +11,9 @@ namespace CityGenerator.FlowFields {
         float2x2[,] tensors;
         public float decayConst = 0.01f;
 
-        public TensorField(int tensorsX, int tensorsY) =>
-            new TensorField(float2.zero, tensorsX, tensorsY, tensorsX, tensorsY);
+        public TensorField(int tensorsX, int tensorsY) : this(float2.zero, tensorsX, tensorsY, tensorsX, tensorsY) { }
         public TensorField(float2 pos, float width, float height, int tensorsX, int tensorsY) {
+            position = pos;
             numTensorsX = tensorsX;
             this.width = width;
             numTensorsY = tensorsY;
@@ -124,7 +124,7 @@ namespace CityGenerator.FlowFields {
             foreach (OrientedPoint point in points) {
                 float2 thisPos = new float2(point.position.x, point.position.z);
 
-                ApplyGridBasisField(thisPos, math.radians(point.rotation.eulerAngles.z), ((Vector2)(previousPos - thisPos)).magnitude);
+                ApplyGridBasisField(thisPos, math.radians(point.rotation.eulerAngles.y), ((Vector2)(previousPos - thisPos)).magnitude);
 
                 previousPos = thisPos;
             }
