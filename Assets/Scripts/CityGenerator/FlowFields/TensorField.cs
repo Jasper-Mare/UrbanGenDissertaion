@@ -37,7 +37,10 @@ namespace CityGenerator.FlowFields {
             int u = (int)((worldPos.x - position.x) * scaleX);
             int v = (int)((worldPos.y - position.y) * scaleY);
 
-            if (u < 0 || numTensorsX >= u || v < 0 || numTensorsY >= v) {
+            if (u < 0 || numTensorsX <= u || v < 0 || numTensorsY <= v) {
+
+                Debug.Log($"Pos: {worldPos} is outside the array ({numTensorsX}, {numTensorsY}), array origin at {position}, scale: ({scaleX}, {scaleY}), uv: ({u}, {v})");
+
                 value = float2x2.zero;
                 return false;
             }
