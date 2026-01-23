@@ -31,7 +31,7 @@ public class StreetGraphTestScript : MonoBehaviour {
             TensorField field = TensorFieldGenerator.Generate(float2.zero, new float2(100, 100), new int2(100, 100), 4);
             field.Visualise(visMatInstance);
             generator = new HyperStreamlineGenerator(field, 5, 1, 5, 0.01f);
-            generator.Run();
+            StartCoroutine(generator.Run(this));
 
             updateVisualisation = false;
         }

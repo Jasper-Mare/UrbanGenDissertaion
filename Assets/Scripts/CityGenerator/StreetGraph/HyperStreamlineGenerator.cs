@@ -34,15 +34,15 @@ namespace CityGenerator.StreetGraph {
             this.seedPointDensity = seedPointDensity;
         }
 
-        public void Run() {
-            ScatterSeedPoints(majorStreamlines);
-            GrowStreamlines(majorStreamlines, true);
+        public System.Collections.IEnumerator Run(UnityEngine.MonoBehaviour runner) {
+            yield return runner.StartCoroutine(ScatterSeedPoints(majorStreamlines));
+            yield return runner.StartCoroutine(GrowStreamlines(majorStreamlines, true));
 
             //ScatterSeedPoints(minorStreamlines);
             //GrowStreamlines(minorStreamlines, false);
         }
 
-        void ScatterSeedPoints(List<HyperStreamline> streamlines) {
+        System.Collections.IEnumerator ScatterSeedPoints(List<HyperStreamline> streamlines) {
             int numSeedPoints = (int)(seedPointDensity * tensorField.width * tensorField.height);
             int2 numEdgeSeedPoints = (int2)(seedPointDensity *  new float2(tensorField.width, tensorField.height));
 
@@ -63,6 +63,7 @@ namespace CityGenerator.StreetGraph {
                 streamlines.Add(new HyperStreamline(tensorField.width, tensorField.height - y));
             }
 
+            yield return null;
 
             // place points throughout the zone
 
@@ -77,7 +78,7 @@ namespace CityGenerator.StreetGraph {
 
         }
 
-        void GrowStreamlines(List<HyperStreamline> streamlines, bool useMajorEigenVectors) {
+        System.Collections.IEnumerator GrowStreamlines(List<HyperStreamline> streamlines, bool useMajorEigenVectors) {
             // this keeps track of which streamlines are still going, it starts off the same as the list of streamlines
             Queue<HyperStreamline> unfinishedStreamlines = new Queue<HyperStreamline>(streamlines);
 
@@ -122,6 +123,8 @@ namespace CityGenerator.StreetGraph {
 
 
                 }
+
+                yield return null;
 
                 UnityEngine.Debug.Log($"Completed streamline has {streamline.points.Count} points and is {streamline.length}m long");
 
