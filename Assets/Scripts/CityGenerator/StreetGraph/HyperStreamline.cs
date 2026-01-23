@@ -35,7 +35,7 @@ namespace CityGenerator.StreetGraph {
             } else if (points.Count == 1) {
                 Debug.DrawRay(new Vector3(points[0].x, 0, points[0].y), Vector3.up, Color.white);
             } else {
-                for (int i = 0; i < points.Count - 1; i++) {
+                for (int i = 1; i < points.Count; i++) {
                     Debug.DrawLine(new Vector3(points[i].x, 0, points[i].y), new Vector3(points[i-1].x, 0, points[i-1].y), Color.orangeRed);
                 }
             }

@@ -93,7 +93,6 @@ namespace CityGenerator.StreetGraph {
                     if (!tensorField.TryGetTensor(currentPos, out tensor)) {
                         // we couldn't get the tensor so we are outside the field
                         streamline.isComplete = true;
-                        UnityEngine.Debug.Log($"Completed streamline has {streamline.points.Count} points and is {streamline.length}m long");
                         break;
                     }
 
@@ -116,8 +115,15 @@ namespace CityGenerator.StreetGraph {
 
                     streamline.AddPoint(nextPos);
 
+                    if (streamline.length >= maxLength) {
+                        streamline.isComplete = true;
+                        break;
+                    }
+
 
                 }
+
+                UnityEngine.Debug.Log($"Completed streamline has {streamline.points.Count} points and is {streamline.length}m long");
 
             }
 
