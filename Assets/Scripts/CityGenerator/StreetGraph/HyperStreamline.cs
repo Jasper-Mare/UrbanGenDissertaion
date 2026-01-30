@@ -32,16 +32,16 @@ namespace CityGenerator.StreetGraph {
         public void DebugRender() {
             if (points.Count == 0) {
                 return;
-            } else if (points.Count == 1) {
-                Debug.DrawRay(new Vector3(points[0].x, 0, points[0].y), Vector3.up, Color.white);
             } else {
+                Debug.DrawRay(new Vector3(points[0].x, 0, points[0].y), Vector3.up * 3, Color.white);
                 for (int i = 1; i < points.Count; i++) {
-                    Debug.DrawLine(new Vector3(points[i].x, 0, points[i].y), new Vector3(points[i-1].x, 0, points[i-1].y), Color.orangeRed);
+                    Debug.DrawRay(new Vector3(points[i].x, 0, points[i].y), Vector3.up, Color.white);
+                    Debug.DrawLine(new Vector3(points[i].x, i*0.01f, points[i].y), new Vector3(points[i-1].x, 0.01f * (i-1), points[i-1].y),
+                        Color.HSVToRGB(length % 1, 1, 1)
+                    );
                 }
             }
         }
-
-
     }
 
 

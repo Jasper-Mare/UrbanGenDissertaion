@@ -27,10 +27,12 @@ public class StreetGraphTestScript : MonoBehaviour {
     void Update() {
 
         if (updateVisualisation) {
+            uint seed = (uint)System.DateTime.Now.Millisecond;
 
-            TensorField field = TensorFieldGenerator.Generate(float2.zero, new float2(100, 100), new int2(100, 100), 4);
+
+            TensorField field = TensorFieldGenerator.Generate(float2.zero, new float2(100, 100), new int2(100, 100), 4, seed);
             field.Visualise(visMatInstance);
-            generator = new HyperStreamlineGenerator(field, 5, 1, 5, 0.01f);
+            generator = new HyperStreamlineGenerator(field, 50, 1, 5, 0.1f, seed);
             StartCoroutine(generator.Run(this));
 
             updateVisualisation = false;
@@ -38,6 +40,9 @@ public class StreetGraphTestScript : MonoBehaviour {
 
         if (generator is not null) {
             foreach (HyperStreamline streamline in generator.majorStreamlines) {
+                streamline.DebugRender();
+            }
+            foreach (HyperStreamline streamline in generator.minorStreamlines) {
                 streamline.DebugRender();
             }
         }

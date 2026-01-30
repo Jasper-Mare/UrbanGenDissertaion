@@ -3,9 +3,9 @@
 namespace CityGenerator.FlowFields {
     static class TensorFieldGenerator {
 
-        public static TensorField Generate(float2 pos, float2 size, int2 numTensors, int iterations) {
+        public static TensorField Generate(float2 pos, float2 size, int2 numTensors, int iterations, uint seed) {
             TensorField field = new TensorField(pos, size.x, size.y, numTensors.x, numTensors.y);
-            Random rng = new Random((uint)System.DateTime.Now.Millisecond);
+            Random rng = new Random(seed);
 
 
             for (int i = 0; i < iterations; i++) {

@@ -22,11 +22,11 @@ namespace CityGenerator.StreetGraph {
         /// <param name="minSeperation">The closest to each other 2 streamlines may be</param>
         /// <param name="lookAheadDist">How far the streamlines search ahead to make an intersection</param>
         /// <param name="seedPointDensity">How many seed points there are per meter squared of tensor field</param>
-        public HyperStreamlineGenerator(TensorField tensorField, float maxLength, float minSeperation, float lookAheadDist, float seedPointDensity) {
+        public HyperStreamlineGenerator(TensorField tensorField, float maxLength, float minSeperation, float lookAheadDist, float seedPointDensity, uint randomSeed) {
             this.tensorField = tensorField;
             majorStreamlines = new List<HyperStreamline>();
             minorStreamlines = new List<HyperStreamline>();
-            rng = new Random((uint)System.DateTime.Now.Millisecond);
+            rng = new Random(randomSeed);
 
             this.maxLength = maxLength;
             this.minSeperation = minSeperation;
@@ -35,11 +35,25 @@ namespace CityGenerator.StreetGraph {
         }
 
         public System.Collections.IEnumerator Run(UnityEngine.MonoBehaviour runner) {
+            // major streamlines
+            yield return null;
+            UnityEngine.Debug.Log("Started scattering major seed points");
             yield return runner.StartCoroutine(ScatterSeedPoints(majorStreamlines));
+            UnityEngine.Debug.Log($"Done scattering major seed points, {majorStreamlines.Count} points scattered");
+            yield return null;
+            UnityEngine.Debug.Log("Started growing major streamlines");
             yield return runner.StartCoroutine(GrowStreamlines(majorStreamlines, true));
+            UnityEngine.Debug.Log("Done growing major streamlines");
 
-            //ScatterSeedPoints(minorStreamlines);
-            //GrowStreamlines(minorStreamlines, false);
+            // minor streamlines
+            yield return null;
+            UnityEngine.Debug.Log("Started scattering minor seed points");
+            yield return runner.StartCoroutine(ScatterSeedPoints(minorStreamlines));
+            UnityEngine.Debug.Log($"Done scattering minor seed points, {minorStreamlines.Count} points scattered");
+            yield return null;
+            UnityEngine.Debug.Log("Started growing minor streamlines");
+            yield return runner.StartCoroutine(GrowStreamlines(minorStreamlines, false));
+            UnityEngine.Debug.Log("Done growing minor streamlines");
         }
 
         System.Collections.IEnumerator ScatterSeedPoints(List<HyperStreamline> streamlines) {
@@ -50,14 +64,16 @@ namespace CityGenerator.StreetGraph {
 
             // place points at the boundaries of the zone
             for (int i = 0; i < numEdgeSeedPoints.x; i++) {
-                float x = rng.NextFloat(spacing * i, spacing * (i + 1));
+                float x = spacing * i + 0.5f * spacing; //rng.NextFloat(spacing * i, spacing * (i + 1));
 
                 streamlines.Add(new HyperStreamline(x, 0));
                 streamlines.Add(new HyperStreamline(tensorField.width - x, tensorField.height));
             }
 
+            yield return null;
+
             for (int i = 0; i < numEdgeSeedPoints.y; i++) {
-                float y = rng.NextFloat(spacing * i, spacing * (i + 1));
+                float y = spacing * i + 0.5f * spacing; //rng.NextFloat(spacing * i, spacing * (i + 1));
 
                 streamlines.Add(new HyperStreamline(0, y));
                 streamlines.Add(new HyperStreamline(tensorField.width, tensorField.height - y));
@@ -69,10 +85,12 @@ namespace CityGenerator.StreetGraph {
 
             for (int i = 0; i < numEdgeSeedPoints.x; i++) {
                 for (int j = 0; j < numEdgeSeedPoints.y; j++) {
-                    float x = rng.NextFloat(spacing * i, spacing * (i + 1));
-                    float y = rng.NextFloat(spacing * j, spacing * (j + 1));
+                    float x = spacing * i + 0.5f * spacing; //rng.NextFloat(spacing * i, spacing * (i + 1));
+                    float y = spacing * j + 0.5f * spacing; //rng.NextFloat(spacing * j, spacing * (j + 1));
                     streamlines.Add(new HyperStreamline(x, y));
                 }
+
+                yield return null;
             }
 
 
@@ -107,12 +125,36 @@ namespace CityGenerator.StreetGraph {
                     // [1] "select the direction satisfying Ev · Vpre ≤ 0"
                     // ie if Ev · Vpre > 0 then use -Ev,
                     // this is because we want the eigenvectors to represent both directions
-                    if (math.dot(eigenvector, streamline.PreviousDirection) > 0) {
+                    if (math.dot(eigenvector, streamline.PreviousDirection) < 0) {
                         eigenvector = -1 * eigenvector;
                     }
 
                     // find next position
                     float2 nextPos = getNextGridPoint(currentPos, eigenvector);
+
+                    // if the streamline gets too close
+                    foreach (HyperStreamline compStreamline in streamlines) {
+                        // if comparing with itself, only check the tail
+                        if (compStreamline == streamline) {
+                            // it returns to its origin which indicates a loop
+                            // (it's too close to its own tail and hasn't gone far enough to have left yet) 
+                            if (
+                                streamline.length > minSeperation
+                                && math.lengthsq(streamline.points[0] - nextPos) < minSeperation * minSeperation
+                            ) {
+                                streamline.isComplete = true;
+                                break;
+                            }
+                        } else {
+                            foreach (float2 point in compStreamline.points) {
+                                // it is too close to an existing hyperstreamline by violating dsep.
+                                if (math.lengthsq(point - nextPos) < minSeperation * minSeperation) {
+                                    streamline.isComplete = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
                     streamline.AddPoint(nextPos);
 
@@ -126,7 +168,8 @@ namespace CityGenerator.StreetGraph {
 
                 yield return null;
 
-                UnityEngine.Debug.Log($"Completed streamline has {streamline.points.Count} points and is {streamline.length}m long");
+                UnityEngine.Debug.Log($"Completed streamline, {unfinishedStreamlines.Count} streamlines left");
+                // UnityEngine.Debug.Log($"Completed streamline has {streamline.points.Count} points and is {streamline.length}m long");
 
             }
 
@@ -134,15 +177,13 @@ namespace CityGenerator.StreetGraph {
 
         }
 
-        // find next position based on [3]
+        // find next position based on DDA (inspired from [3A] and [3B])
         float2 getNextGridPoint(float2 currentPoint, float2 direction) {
             float2 cellSize = new float2(tensorField.width / tensorField.numTensorsX, tensorField.height / tensorField.numTensorsY);
-            float2 tileCoords = math.floor(currentPoint / cellSize);
-            float2 dirSign = math.sign(direction); // this might need changing
+            float2 coordsInTile = currentPoint % cellSize;
+            float2 tilePos = currentPoint - coordsInTile;
 
-            float2 dt = ((tileCoords + dirSign) * cellSize - currentPoint) / direction;
-
-            return float2.zero;
+            return currentPoint + (direction * cellSize * 0.5f);
         }
 
     }
@@ -182,7 +223,8 @@ intersection with the coastline.
 [2] https://tobydriscoll.net/fnc-julia/ivp/adaptive-rk.html
 Adaptive RK is basically just estimating the step size based on the data
 
-[3] https://theshoemaker.de/posts/ray-casting-in-2d-grids
+[3A] https://theshoemaker.de/posts/ray-casting-in-2d-grids
+[3B] https://www.youtube.com/watch?v=NbSee-XM7WA
 As we have a grid with finite detail we should just step into the next grid cell like a raycast
 
 */
