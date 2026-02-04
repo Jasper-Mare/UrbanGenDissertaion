@@ -288,6 +288,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StreetGraphTestScript
   updateVisualisation: 1
+  maxLength: 50
+  minSeperation: 2
+  lookAheadDist: 5
+  seedDensityCount: 4
+  seedDensityLength: 100
 --- !u!114 &1056260890
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,6 +15,24 @@ public class StreetGraphTestScript : MonoBehaviour {
     private Material visMatInstance;
     private HyperStreamlineGenerator generator;
 
+    [Header("Generator Properties")]
+    [SerializeField]
+    float maxLength = 50;
+    [SerializeField]
+    float minSeperation = 1;
+    [SerializeField]
+    float lookAheadDist = 5;
+    [SerializeField]
+    float seedDensityCount = 1f;
+    [SerializeField]
+    float seedDensityLength = 1f;
+
+    float seedDensity {
+        get {
+            return seedDensityCount / seedDensityLength;
+        }
+    }
+
     void Start() {
         mesh = GetComponent<UniqueMesh>().Mesh;
         rend = GetComponent<Renderer>();
@@ -32,7 +50,7 @@ public class StreetGraphTestScript : MonoBehaviour {
 
             TensorField field = TensorFieldGenerator.Generate(float2.zero, new float2(100, 100), new int2(100, 100), 4, seed);
             field.Visualise(visMatInstance);
-            generator = new HyperStreamlineGenerator(field, 50, 1, 5, 0.1f, seed);
+            generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
             StartCoroutine(generator.Run(this));
 
             updateVisualisation = false;

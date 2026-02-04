@@ -12,7 +12,7 @@ namespace CityGenerator.StreetGraph {
         }
 
         public void DebugRender() {
-            Debug.DrawRay(new Vector3(position.x, 3, position.y), Vector3.up * 3, Color.cyan);
+            Debug.DrawRay(new Vector3(position.x, 1.5f, position.y), Vector3.up * -3, Color.brown);
         }
 
 
