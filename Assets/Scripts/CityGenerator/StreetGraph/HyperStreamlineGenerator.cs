@@ -27,7 +27,7 @@ namespace CityGenerator.StreetGraph {
             this.tensorField = tensorField;
             majorStreamlines = new List<HyperStreamline>();
             minorStreamlines = new List<HyperStreamline>();
-            Intersections = new List<HyperStreamlineIntersection>();
+            intersections = new List<HyperStreamlineIntersection>();
             rng = new Random(randomSeed);
 
             this.maxLength = maxLength;
@@ -200,12 +200,14 @@ namespace CityGenerator.StreetGraph {
 
                             float2 intersectPoint;
                             if (CheckLinesIntersect(majorA, majorB, minorA, minorB, out intersectPoint)) {
-                                Intersections.Add(new HyperStreamlineIntersection(intersectPoint, majorStreamline, minorStreamline));
+                                intersections.Add(new HyperStreamlineIntersection(intersectPoint, majorStreamline, minorStreamline));
                             }
 
 
                         }
                     }
+
+                    yield return null;
                 }
             }
 
