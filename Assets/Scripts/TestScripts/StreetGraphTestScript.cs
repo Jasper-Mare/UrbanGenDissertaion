@@ -45,6 +45,10 @@ public class StreetGraphTestScript : MonoBehaviour {
             foreach (HyperStreamline streamline in generator.minorStreamlines) {
                 streamline.DebugRender();
             }
+            foreach (HyperStreamlineIntersection intersection in generator.intersections) {
+                intersection.DebugRender();
+            }
+
         }
 
 
