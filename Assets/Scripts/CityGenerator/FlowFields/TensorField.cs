@@ -10,6 +10,7 @@ namespace CityGenerator.FlowFields {
         readonly public int numTensorsX, numTensorsY;
         float2x2[,] tensors;
         public float decayConst = 0.01f;
+        float2 scaling;
 
         public TensorField(int tensorsX, int tensorsY) : this(float2.zero, tensorsX, tensorsY, tensorsX, tensorsY) { }
         public TensorField(float2 pos, float width, float height, int tensorsX, int tensorsY) {
@@ -19,6 +20,8 @@ namespace CityGenerator.FlowFields {
             numTensorsY = tensorsY;
             this.height = height;
             tensors = new float2x2[tensorsX, tensorsY];
+
+            scaling = new float2(width/numTensorsX, height/numTensorsY);
         }
 
         public float2x2 this[int x, int y] {
@@ -67,8 +70,8 @@ namespace CityGenerator.FlowFields {
 
             for (int i = 0; i < numTensorsX; i++) {
                 for (int j = 0; j < numTensorsY; j++) {
-                    float dx = i - location.x;
-                    float dy = j - location.y;
+                    float dx = (i*scaling.x + position.x) - location.x;
+                    float dy = (j*scaling.y + position.y) - location.y;
 
                     float a = dx * dx - dy * dy;
                     float b = 2 * dx * dy;
@@ -87,8 +90,8 @@ namespace CityGenerator.FlowFields {
 
             for (int i = 0; i < numTensorsX; i++) {
                 for (int j = 0; j < numTensorsY; j++) {
-                    float dx = i - location.x;
-                    float dy = j - location.y;
+                    float dx = (i*scaling.x + position.x) - location.x;
+                    float dy = (j*scaling.y + position.y) - location.y;
 
                     float a = dy * dy - dx * dx;
                     float b = -2 * dx * dy;
@@ -107,8 +110,8 @@ namespace CityGenerator.FlowFields {
 
             for (int i = 0; i < numTensorsX; i++) {
                 for (int j = 0; j < numTensorsY; j++) {
-                    float dx = i - location.x;
-                    float dy = j - location.y;
+                    float dx = (i*scaling.x + position.x) - location.x;
+                    float dy = (j*scaling.y + position.y) - location.y;
 
                     float a = dx * dx - dy * dy;
                     float b = -2 * dx * dy;
@@ -127,8 +130,8 @@ namespace CityGenerator.FlowFields {
 
             for (int i = 0; i < numTensorsX; i++) {
                 for (int j = 0; j < numTensorsY; j++) {
-                    float dx = i - location.x;
-                    float dy = j - location.y;
+                    float dx = (i*scaling.x + position.x) - location.x;
+                    float dy = (j*scaling.y + position.y) - location.y;
 
                     float2x2 basis = new float2x2(
                         dx, -dy,
@@ -153,11 +156,11 @@ namespace CityGenerator.FlowFields {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CombineTensor(int i, int j, float2x2 tensor, float2 location) {
-            // might need to adjust "location" in future based off the position and size of the field
+            // adjust a and b to the world scale
+            float a = (location.x - (i*scaling.x + position.x));
+            float b = (location.y - (j*scaling.y + position.y));
 
             // c^2 = a^2 + b^2
-            float a = (location.x - i);
-            float b = (location.y - j);
             float distSq = a*a + b*b;
             tensors[i, j] += tensor * math.exp(-decayConst * distSq);
         }

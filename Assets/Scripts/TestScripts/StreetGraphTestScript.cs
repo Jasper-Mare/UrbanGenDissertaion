@@ -8,14 +8,27 @@ using UnityEngine;
 public class StreetGraphTestScript : MonoBehaviour {
 
     [SerializeField]
-    bool updateVisualisation = false;
+    bool shouldRegenerate = false;
+    [SerializeField]
+    uint generatorSeed = 0;
 
     private Mesh mesh;
     private Renderer rend;
     private Material visMatInstance;
     private HyperStreamlineGenerator generator;
 
-    [Header("Generator Properties")]
+    [Header("Tensorfield Generator Properties")]
+    [SerializeField]
+    float2 size = new float2(100, 100);
+    [SerializeField]
+    int2 numberOfTensors = new int2(100, 100);
+    [SerializeField]
+    int numIterations = 4;
+    [SerializeField]
+    float decayConstant = 0.01f;
+
+
+    [Header("Streamline Generator Properties")]
     [SerializeField]
     float maxLength = 50;
     [SerializeField]
@@ -27,6 +40,8 @@ public class StreetGraphTestScript : MonoBehaviour {
     [SerializeField]
     float seedDensityLength = 1f;
 
+    float2 position = float2.zero;
+
     float seedDensity {
         get {
             return seedDensityCount / seedDensityLength;
@@ -37,23 +52,19 @@ public class StreetGraphTestScript : MonoBehaviour {
         mesh = GetComponent<UniqueMesh>().Mesh;
         rend = GetComponent<Renderer>();
         rend.material = (visMatInstance = rend.material);
-        MeshCreator.CreatePlane(mesh, 100, 100, 1, 1);
 
-        updateVisualisation = true;
+        Vector3 pos3d = transform.position;
+        position = new float2(pos3d.x, pos3d.z);
+
+        shouldRegenerate = true;
     }
 
     void Update() {
 
-        if (updateVisualisation) {
-            uint seed = (uint)System.DateTime.Now.Millisecond;
+        if (shouldRegenerate) {
+            Generate();
 
-
-            TensorField field = TensorFieldGenerator.Generate(float2.zero, new float2(100, 100), new int2(100, 100), 4, seed);
-            field.Visualise(visMatInstance);
-            generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
-            StartCoroutine(generator.Run(this));
-
-            updateVisualisation = false;
+            shouldRegenerate = false;
         }
 
         if (generator is not null) {
@@ -70,6 +81,18 @@ public class StreetGraphTestScript : MonoBehaviour {
         }
 
 
+    }
+
+    void Generate() {
+        uint seed = (generatorSeed == 0)
+            ? (uint)System.DateTime.Now.Millisecond
+            : generatorSeed;
+
+        MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
+        TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
+        field.Visualise(visMatInstance);
+        generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
+        StartCoroutine(generator.Run(this));
     }
 
     void OnDestroy() {

@@ -4,18 +4,18 @@ using UnityEngine;
 namespace CityGenerator.MeshUtilities {
     static class MeshCreator {
 
-        public static void CreatePlane(Mesh mesh, int xSize, int zSize)
-            => CreatePlane(mesh, xSize, zSize, xSize + 1, zSize + 1);
-        public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numQuadsX, int numQuadsZ)
+        public static void CreatePlane(Mesh mesh, float xSize, float zSize)
+            => CreatePlane(mesh, xSize, zSize, (int)xSize + 1, (int)zSize + 1);
+        public static void CreatePlane(Mesh mesh, float xSize, float zSize, int numQuadsX, int numQuadsZ)
             => CreatePlane(mesh, xSize, zSize, numQuadsX, numQuadsZ, Vector3.zero);
-        public static void CreatePlane(Mesh mesh, int xSize, int zSize, int numQuadsX, int numQuadsZ, Vector3 origin) {
+        public static void CreatePlane(Mesh mesh, float xSize, float zSize, int numQuadsX, int numQuadsZ, Vector3 origin) {
 
             int numVertsX = numQuadsX + 1;
             int numVertsZ = numQuadsZ + 1;
 
             float uvScale = 1.0f / math.max(numQuadsX, numQuadsZ);
-            float xScale = xSize / (float)numQuadsX;
-            float zScale = zSize / (float)numQuadsZ;
+            float xScale = xSize / numQuadsX;
+            float zScale = zSize / numQuadsZ;
 
             int vertCount = numVertsX * numVertsZ;
             int triIndexCount = numQuadsX * numQuadsZ * 6;

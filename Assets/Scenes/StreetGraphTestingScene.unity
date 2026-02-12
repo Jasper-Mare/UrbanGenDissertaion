@@ -287,12 +287,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56dc09bd3f67e244287cf9ebcc360758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StreetGraphTestScript
-  updateVisualisation: 1
+  shouldRegenerate: 1
+  size:
+    x: 10
+    y: 10
+  numberOfTensors:
+    x: 100
+    y: 100
+  numIterations: 4
+  decayConstant: 0.01
   maxLength: 50
   minSeperation: 2
   lookAheadDist: 5
   seedDensityCount: 4
-  seedDensityLength: 100
+  seedDensityLength: 1000
 --- !u!114 &1056260890
 MonoBehaviour:
   m_ObjectHideFlags: 0
