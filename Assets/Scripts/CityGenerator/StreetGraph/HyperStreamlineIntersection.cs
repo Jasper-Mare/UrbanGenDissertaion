@@ -4,10 +4,13 @@ using UnityEngine;
 namespace CityGenerator.StreetGraph {
     class HyperStreamlineIntersection {
         public readonly HyperStreamline[] intersectingStreamlines;
+        // the index of the point in the streamlines that the intersection is closest to
+        public readonly int[] pointIndexesInStreamlines;
         public float2 position;
 
-        public HyperStreamlineIntersection(float2 position, params HyperStreamline[] streamlines) {
+        public HyperStreamlineIntersection(float2 position, HyperStreamline[] streamlines, int[] positionIndexes) {
             this.intersectingStreamlines = streamlines;
+            this.pointIndexesInStreamlines = positionIndexes;
             this.position = position;
         }
 

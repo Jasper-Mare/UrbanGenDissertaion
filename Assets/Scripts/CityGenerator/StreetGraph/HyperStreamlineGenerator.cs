@@ -15,6 +15,7 @@ namespace CityGenerator.StreetGraph {
         float minSeperation;
         float lookAheadDist;
         float seedPointDensity;
+        float bridgeProportion;
 
         Random rng;
 
@@ -23,7 +24,7 @@ namespace CityGenerator.StreetGraph {
         /// <param name="minSeperation">The closest to each other 2 streamlines may be</param>
         /// <param name="lookAheadDist">How far the streamlines search ahead to make an intersection</param>
         /// <param name="seedPointDensity">How many seed points there are per meter squared of tensor field</param>
-        public HyperStreamlineGenerator(TensorField tensorField, float maxLength, float minSeperation, float lookAheadDist, float seedPointDensity, uint randomSeed) {
+        public HyperStreamlineGenerator(TensorField tensorField, float maxLength, float minSeperation, float lookAheadDist, float seedPointDensity, float bridgeProportion, uint randomSeed) {
             this.tensorField = tensorField;
             majorStreamlines = new List<HyperStreamline>();
             minorStreamlines = new List<HyperStreamline>();
@@ -34,6 +35,7 @@ namespace CityGenerator.StreetGraph {
             this.minSeperation = minSeperation;
             this.lookAheadDist = lookAheadDist;
             this.seedPointDensity = seedPointDensity;
+            this.bridgeProportion = bridgeProportion;
         }
 
         public System.Collections.IEnumerator Run(UnityEngine.MonoBehaviour runner) {
@@ -62,6 +64,13 @@ namespace CityGenerator.StreetGraph {
             UnityEngine.Debug.Log("Started identifying intersections");
             yield return runner.StartCoroutine(FindIntersections());
             UnityEngine.Debug.Log($"Done identifying intersections");
+
+            // build bridges
+            yield return null;
+            UnityEngine.Debug.Log("Started building bridges");
+            yield return runner.StartCoroutine(BuildBridges());
+            UnityEngine.Debug.Log($"Done building bridges");
+
         }
 
         System.Collections.IEnumerator ScatterSeedPoints(List<HyperStreamline> streamlines) {
@@ -200,7 +209,15 @@ namespace CityGenerator.StreetGraph {
 
                             float2 intersectPoint;
                             if (CheckLinesIntersect(majorA, majorB, minorA, minorB, out intersectPoint)) {
-                                intersections.Add(new HyperStreamlineIntersection(intersectPoint, majorStreamline, minorStreamline));
+                                HyperStreamline[] intersectingStreamlines = new HyperStreamline[] {
+                                    majorStreamline,
+                                    minorStreamline
+                                };
+                                int[] posIndexes = new int[] {
+                                    iMajor,
+                                    iMinor
+                                };
+                                intersections.Add(new HyperStreamlineIntersection(intersectPoint, intersectingStreamlines, posIndexes));
                             }
 
 
@@ -213,6 +230,19 @@ namespace CityGenerator.StreetGraph {
 
 
             // check for which tips end near other things
+
+            yield return null;
+        }
+
+        System.Collections.IEnumerator BuildBridges() {
+            int numBridges = (int)(intersections.Count * bridgeProportion);
+
+            // loop over all the intersections
+            for (int iBridge = 0; iBridge < numBridges; iBridge++) {
+                int iIntersection = (int)(iBridge * bridgeProportion);
+                HyperStreamlineIntersection intersection = intersections[iIntersection];
+                // TODO working here
+            }
 
             yield return null;
         }

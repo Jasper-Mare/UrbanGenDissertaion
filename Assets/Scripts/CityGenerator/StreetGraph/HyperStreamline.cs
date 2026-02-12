@@ -7,6 +7,7 @@ namespace CityGenerator.StreetGraph {
 
     class HyperStreamline {
         public List<float2> points = new List<float2>();
+        public List<HyperStreamlineIntersection> intersections = new List<HyperStreamlineIntersection>();
         public float2 PreviousDirection = float2.zero;
         public float length = 0;
         public bool isComplete = false;
