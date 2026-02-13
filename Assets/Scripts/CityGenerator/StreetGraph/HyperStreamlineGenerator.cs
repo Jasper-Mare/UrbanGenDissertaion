@@ -12,6 +12,7 @@ namespace CityGenerator.StreetGraph {
         public List<HyperStreamline> majorStreamlines;
         public List<HyperStreamline> minorStreamlines;
         public List<HyperStreamlineIntersection> intersections;
+        public List<Bridge> bridges;
 
         NetworkElementTemplate streetTemplate;
 
@@ -33,6 +34,7 @@ namespace CityGenerator.StreetGraph {
             majorStreamlines = new List<HyperStreamline>();
             minorStreamlines = new List<HyperStreamline>();
             intersections = new List<HyperStreamlineIntersection>();
+            bridges = new List<Bridge>();
             rng = new Random(randomSeed);
 
             this.maxLength = maxLength;
@@ -256,6 +258,8 @@ namespace CityGenerator.StreetGraph {
         }
 
         System.Collections.IEnumerator MakeBridge(HyperStreamlineIntersection intersection) {
+            float requiredMinSeperation = (streetTemplate.bridgingHeight / streetTemplate.maximumSteepness) + streetTemplate.minimumIntersectionRadius * 2;
+
             // pick a random streamline to make the bridge
             HyperStreamline bridgeStreamline = intersection.intersectingStreamlines[
                 rng.NextInt(0, intersection.intersectingStreamlines.Length - 1)
@@ -277,6 +281,15 @@ namespace CityGenerator.StreetGraph {
                 if (iBridgeLeft == 0) {
                     break;
                 }
+
+                HyperStreamlineIntersection leftIntersection = bridgeStreamline.intersections[iBridgeLeft];
+                HyperStreamlineIntersection nextLeftIntersection = bridgeStreamline.intersections[iBridgeLeft - 1];
+
+                // stop if this and the next intersection are far enough apart
+                if (math.distance(leftIntersection.position, nextLeftIntersection.position) >= requiredMinSeperation) {
+                    break;
+                }
+
                 iBridgeLeft--;
 
             }
@@ -287,9 +300,28 @@ namespace CityGenerator.StreetGraph {
                 if (iBridgeRight == bridgeStreamline.intersections.Count - 1) {
                     break;
                 }
+
+                HyperStreamlineIntersection rightIntersection = bridgeStreamline.intersections[iBridgeRight];
+                HyperStreamlineIntersection nextRightIntersection = bridgeStreamline.intersections[iBridgeRight + 1];
+
+                // stop if this and the next intersection are far enough apart
+                if (math.distance(rightIntersection.position, nextRightIntersection.position) >= requiredMinSeperation) {
+                    break;
+                }
+
                 iBridgeRight++;
 
             }
+
+
+            // Make a new bridge
+            Bridge newBridge = new Bridge(bridgeStreamline);
+            // add all the intersections between iBridgeLeft and iBridgeRight to the bridge
+            for (int i = iBridgeLeft; i <= iBridgeRight; i++) {
+                newBridge.intersections.Add(bridgeStreamline.intersections[i]);
+            }
+
+            bridges.Add(newBridge);
 
             yield return null;
         }

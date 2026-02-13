@@ -12,6 +12,7 @@ namespace CityGenerator.Templates {
         /// </summary>
         public float maximumSteepness;
         public float minimumIntersectionRadius;
+        public float bridgingHeight;
 
     }
 }

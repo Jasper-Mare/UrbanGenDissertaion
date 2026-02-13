@@ -63,6 +63,8 @@ public class StreetGraphTestScript : MonoBehaviour {
         position = new float2(pos3d.x, pos3d.z);
 
         template.maximumSteepness = 1f;
+        template.minimumIntersectionRadius = 3f;
+        template.bridgingHeight = 3f;
 
         shouldRegenerate = true;
     }
@@ -84,6 +86,9 @@ public class StreetGraphTestScript : MonoBehaviour {
             }
             foreach (HyperStreamlineIntersection intersection in generator.intersections) {
                 intersection.DebugRender();
+            }
+            foreach (Bridge bridge in generator.bridges) {
+                bridge.DebugRender();
             }
 
         }
