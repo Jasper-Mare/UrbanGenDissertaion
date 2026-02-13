@@ -1,7 +1,4 @@
 ﻿using Unity.Mathematics;
-using Color = UnityEngine.Color;
-using Debug = UnityEngine.Debug;
-using Vector3 = UnityEngine.Vector3;
 
 namespace CityGenerator.FlowFields {
     static class TensorFieldGenerator {
@@ -15,8 +12,6 @@ namespace CityGenerator.FlowFields {
             for (int i = 0; i < iterations; i++) {
                 int opperation = rng.NextInt(4);
                 float2 location = rng.NextFloat2(size) + pos;
-
-                Debug.DrawRay(new float3(location.x, 0, location.y), Vector3.up * 30, Color.green, 30);
 
                 switch (opperation) {
                     case 0:

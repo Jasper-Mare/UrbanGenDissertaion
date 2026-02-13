@@ -1,6 +1,8 @@
 ﻿
 using CityGenerator.FlowFields;
+using CityGenerator.Templates;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 
 namespace CityGenerator.StreetGraph {
@@ -10,6 +12,8 @@ namespace CityGenerator.StreetGraph {
         public List<HyperStreamline> majorStreamlines;
         public List<HyperStreamline> minorStreamlines;
         public List<HyperStreamlineIntersection> intersections;
+
+        NetworkElementTemplate streetTemplate;
 
         float maxLength;
         float minSeperation;
@@ -24,7 +28,7 @@ namespace CityGenerator.StreetGraph {
         /// <param name="minSeperation">The closest to each other 2 streamlines may be</param>
         /// <param name="lookAheadDist">How far the streamlines search ahead to make an intersection</param>
         /// <param name="seedPointDensity">How many seed points there are per meter squared of tensor field</param>
-        public HyperStreamlineGenerator(TensorField tensorField, float maxLength, float minSeperation, float lookAheadDist, float seedPointDensity, float bridgeProportion, uint randomSeed) {
+        public HyperStreamlineGenerator(TensorField tensorField, float maxLength, float minSeperation, float lookAheadDist, float seedPointDensity, float bridgeProportion, uint randomSeed, NetworkElementTemplate template) {
             this.tensorField = tensorField;
             majorStreamlines = new List<HyperStreamline>();
             minorStreamlines = new List<HyperStreamline>();
@@ -36,6 +40,7 @@ namespace CityGenerator.StreetGraph {
             this.lookAheadDist = lookAheadDist;
             this.seedPointDensity = seedPointDensity;
             this.bridgeProportion = bridgeProportion;
+            this.streetTemplate = template;
         }
 
         public System.Collections.IEnumerator Run(UnityEngine.MonoBehaviour runner) {
@@ -68,7 +73,7 @@ namespace CityGenerator.StreetGraph {
             // build bridges
             yield return null;
             UnityEngine.Debug.Log("Started building bridges");
-            yield return runner.StartCoroutine(BuildBridges());
+            yield return runner.StartCoroutine(BuildBridges(runner));
             UnityEngine.Debug.Log($"Done building bridges");
 
         }
@@ -234,14 +239,56 @@ namespace CityGenerator.StreetGraph {
             yield return null;
         }
 
-        System.Collections.IEnumerator BuildBridges() {
+        System.Collections.IEnumerator BuildBridges(UnityEngine.MonoBehaviour runner) {
             int numBridges = (int)(intersections.Count * bridgeProportion);
 
             // loop over all the intersections
             for (int iBridge = 0; iBridge < numBridges; iBridge++) {
+                // find the intersection to turn into a bridge
                 int iIntersection = (int)(iBridge * bridgeProportion);
                 HyperStreamlineIntersection intersection = intersections[iIntersection];
-                // TODO working here
+
+                // make a bridge around that intersection
+                yield return runner.StartCoroutine(MakeBridge(intersection));
+
+            }
+
+        }
+
+        System.Collections.IEnumerator MakeBridge(HyperStreamlineIntersection intersection) {
+            // pick a random streamline to make the bridge
+            HyperStreamline bridgeStreamline = intersection.intersectingStreamlines[
+                rng.NextInt(0, intersection.intersectingStreamlines.Length - 1)
+            ];
+
+            // sort that streamline's intersections by their position indexes
+            bridgeStreamline.intersections = bridgeStreamline.intersections.OrderBy(
+                x => x.getPointIndex(bridgeStreamline)
+            ).ToList();
+
+            // explore the surrounding intersections to find which ones are too close to unbridge
+            int iCurrentIntersection = bridgeStreamline.intersections.IndexOf(intersection);
+            int iBridgeLeft = iCurrentIntersection;
+            int iBridgeRight = iCurrentIntersection;
+
+            // explore leftward
+            while (true) {
+                // stop if the index reaches the lowest index intersection 
+                if (iBridgeLeft == 0) {
+                    break;
+                }
+                iBridgeLeft--;
+
+            }
+
+            // explore rightward
+            while (true) {
+                // stop if the index reaches the highest index intersection 
+                if (iBridgeRight == bridgeStreamline.intersections.Count - 1) {
+                    break;
+                }
+                iBridgeRight++;
+
             }
 
             yield return null;

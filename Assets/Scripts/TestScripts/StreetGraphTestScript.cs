@@ -1,6 +1,7 @@
 ﻿using CityGenerator.FlowFields;
 using CityGenerator.MeshUtilities;
 using CityGenerator.StreetGraph;
+using CityGenerator.Templates;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -39,8 +40,13 @@ public class StreetGraphTestScript : MonoBehaviour {
     float seedDensityCount = 1f;
     [SerializeField]
     float seedDensityLength = 1f;
+    [SerializeField]
+    [Range(0, 1)]
+    float bridgeProportion = 0.1f;
 
     float2 position = float2.zero;
+
+    NetworkElementTemplate template = new NetworkElementTemplate();
 
     float seedDensity {
         get {
@@ -55,6 +61,8 @@ public class StreetGraphTestScript : MonoBehaviour {
 
         Vector3 pos3d = transform.position;
         position = new float2(pos3d.x, pos3d.z);
+
+        template.maximumSteepness = 1f;
 
         shouldRegenerate = true;
     }
@@ -91,7 +99,7 @@ public class StreetGraphTestScript : MonoBehaviour {
         MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
         TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
         field.Visualise(visMatInstance);
-        generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
+        generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, bridgeProportion, seed, template);
         StartCoroutine(generator.Run(this));
     }
 

@@ -18,6 +18,16 @@ namespace CityGenerator.StreetGraph {
             Debug.DrawRay(new Vector3(position.x, 1.5f, position.y), Vector3.up * -3, Color.brown);
         }
 
+        public int getPointIndex(HyperStreamline streamlineToCheck) {
+            for (int i = 0; i < intersectingStreamlines.Length; i++) {
+                if (intersectingStreamlines[i] == streamlineToCheck) {
+                    return pointIndexesInStreamlines[i];
+                }
+            }
+            // if the streamline isn't a part of this intersection
+            return -1;
+        }
+
 
     }
 }

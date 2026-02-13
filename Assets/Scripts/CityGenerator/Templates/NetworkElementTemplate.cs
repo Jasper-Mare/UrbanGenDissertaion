@@ -2,14 +2,16 @@
 using UnityEngine;
 
 namespace CityGenerator.Templates {
-    public abstract class NetworkElementTemplate {
+    public class NetworkElementTemplate {
 
-        OutlineShape outline;
-        Material mat;
+        public OutlineShape outline;
+        public Material mat;
 
-        // mesh builder
-        // shape constraints
-        // ect
+        /// <summary>
+        /// The maximum meters the road can rise per meter traveled horizontally
+        /// </summary>
+        public float maximumSteepness;
+        public float minimumIntersectionRadius;
 
     }
 }
