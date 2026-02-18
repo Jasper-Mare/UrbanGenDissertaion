@@ -3,6 +3,7 @@ using CityGenerator.MeshUtilities;
 using CityGenerator.StreetGraph;
 using CityGenerator.Templates;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -114,7 +115,13 @@ public class CityMesherTestScript : MonoBehaviour {
         yield return StartCoroutine(streamlineGenerator.Run(this));
         yield return null;
 
-        meshGenerator = new MeshGenerator(seed, template);
+        List<HyperStreamline> streamlines = new List<HyperStreamline>();
+        streamlines.AddRange(streamlineGenerator.majorStreamlines);
+        streamlines.AddRange(streamlineGenerator.minorStreamlines);
+        List<HyperStreamlineIntersection> intersections = streamlineGenerator.intersections;
+        List<Bridge> bridges = streamlineGenerator.bridges;
+
+        meshGenerator = new MeshGenerator(seed, template, streamlines, intersections, bridges);
         yield return StartCoroutine(meshGenerator.Run(this));
     }
 
