@@ -16,6 +16,7 @@ public class OrientedPointDebug : MonoBehaviour {
         point.rotation = transform.rotation;
 
         Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.right), Color.orange);
-        Debug.DrawRay(point.position, Vector3.up);
+        Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.up), Color.beige);
+        Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.forward), Color.chartreuse);
     }
 }

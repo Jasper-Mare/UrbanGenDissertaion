@@ -55,7 +55,7 @@ namespace CityGenerator.MeshUtilities {
         }
 
         // based off [1]
-        public static void ExtrudeMeshAlongBezier(Mesh mesh, OutlineShape outline, OrientedPoint[] path) {
+        public static void ExtrudeMeshAlongOrientedPath(Mesh mesh, OutlineShape outline, OrientedPoint[] path) {
 
             int vertsInShape = outline.points.Length;
             int segments = path.Length - 1;

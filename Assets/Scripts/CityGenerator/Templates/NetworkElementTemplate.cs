@@ -5,7 +5,7 @@ namespace CityGenerator.Templates {
     public class NetworkElementTemplate {
 
         public OutlineShape outline;
-        public Material mat;
+        public Material roadMaterial;
 
         /// <summary>
         /// The maximum meters the road can rise per meter traveled horizontally

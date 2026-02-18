@@ -19,7 +19,7 @@ public class CityMesherTestScript : MonoBehaviour {
     private Renderer rend;
     private Material visMatInstance;
     private HyperStreamlineGenerator streamlineGenerator;
-    private MeshGenerator meshGenerator;
+    private CityMeshGenerator meshGenerator;
 
     [Header("Tensorfield Generator Properties")]
     [SerializeField]
@@ -48,6 +48,8 @@ public class CityMesherTestScript : MonoBehaviour {
     float bridgeProportion = 0.1f;
 
     [Header("Mesh Generator Properties")]
+    [SerializeField]
+    Material templateMaterial;
 
     float2 position = float2.zero;
 
@@ -70,6 +72,13 @@ public class CityMesherTestScript : MonoBehaviour {
         template.maximumSteepness = 1f;
         template.minimumIntersectionRadius = 3f;
         template.bridgingHeight = 3f;
+        template.outline = new OutlineShape(
+            new Vector2[] { new(1, 0), new(-1, 0) },
+            new Vector2[] { new(0, 1), new(0, 1) },
+            new float[] { 0.0f, 1.0f },
+            new int[] { 0, 1 }
+        );
+        template.roadMaterial = templateMaterial;
 
         shouldRegenerate = true;
     }
@@ -121,7 +130,7 @@ public class CityMesherTestScript : MonoBehaviour {
         List<HyperStreamlineIntersection> intersections = streamlineGenerator.intersections;
         List<Bridge> bridges = streamlineGenerator.bridges;
 
-        meshGenerator = new MeshGenerator(seed, template, streamlines, intersections, bridges);
+        meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
         yield return StartCoroutine(meshGenerator.Run(this));
     }
 
