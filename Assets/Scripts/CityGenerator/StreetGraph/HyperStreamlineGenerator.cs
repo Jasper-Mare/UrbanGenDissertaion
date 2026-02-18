@@ -74,9 +74,9 @@ namespace CityGenerator.StreetGraph {
 
             // build bridges
             yield return null;
-            UnityEngine.Debug.Log("Started building bridges");
-            yield return runner.StartCoroutine(BuildBridges(runner));
-            UnityEngine.Debug.Log($"Done building bridges");
+            UnityEngine.Debug.Log("Started identifying bridges");
+            yield return runner.StartCoroutine(IdentifyBridges(runner));
+            UnityEngine.Debug.Log($"Done identifying bridges");
 
         }
 
@@ -193,7 +193,6 @@ namespace CityGenerator.StreetGraph {
                 yield return null;
 
                 UnityEngine.Debug.Log($"Completed streamline, {unfinishedStreamlines.Count} streamlines left");
-                // UnityEngine.Debug.Log($"Completed streamline has {streamline.points.Count} points and is {streamline.length}m long");
 
             }
         }
@@ -224,7 +223,17 @@ namespace CityGenerator.StreetGraph {
                                     iMajor,
                                     iMinor
                                 };
-                                intersections.Add(new HyperStreamlineIntersection(intersectPoint, intersectingStreamlines, posIndexes));
+
+                                HyperStreamlineIntersection newIntersection = new HyperStreamlineIntersection(
+                                    intersectPoint,
+                                    intersectingStreamlines,
+                                    posIndexes
+                                );
+
+                                intersections.Add(newIntersection);
+                                majorStreamline.intersections.Add(newIntersection);
+                                minorStreamline.intersections.Add(newIntersection);
+
                             }
 
 
@@ -241,7 +250,7 @@ namespace CityGenerator.StreetGraph {
             yield return null;
         }
 
-        System.Collections.IEnumerator BuildBridges(UnityEngine.MonoBehaviour runner) {
+        System.Collections.IEnumerator IdentifyBridges(UnityEngine.MonoBehaviour runner) {
             int numBridges = (int)(intersections.Count * bridgeProportion);
 
             // loop over all the intersections
@@ -281,7 +290,7 @@ namespace CityGenerator.StreetGraph {
                 if (iBridgeLeft == 0) {
                     break;
                 }
-
+                UnityEngine.Debug.Log($"iBridgeLeft: {iBridgeLeft}, num intersections: {bridgeStreamline.intersections.Count}");
                 HyperStreamlineIntersection leftIntersection = bridgeStreamline.intersections[iBridgeLeft];
                 HyperStreamlineIntersection nextLeftIntersection = bridgeStreamline.intersections[iBridgeLeft - 1];
 
@@ -326,7 +335,8 @@ namespace CityGenerator.StreetGraph {
             yield return null;
         }
 
-        // find next position based on DDA (inspired from [3A] and [3B])
+        // find next position
+        // someday want to do it based on DDA (inspired from [3A] and [3B])
         float2 getNextGridPoint(float2 currentPoint, float2 direction) {
             float2 cellSize = new float2(tensorField.width / tensorField.numTensorsX, tensorField.height / tensorField.numTensorsY);
             float2 coordsInTile = currentPoint % cellSize;

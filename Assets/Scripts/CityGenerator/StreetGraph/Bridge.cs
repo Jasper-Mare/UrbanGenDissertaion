@@ -8,6 +8,7 @@ namespace CityGenerator.StreetGraph {
 
         public Bridge(HyperStreamline streamline) {
             this.streamline = streamline;
+            this.intersections = new List<HyperStreamlineIntersection>();
         }
 
         public void DebugRender() {
