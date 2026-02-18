@@ -4,6 +4,9 @@ using CityGenerator.Templates;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Debug = UnityEngine.Debug;
+using IEnumerator = System.Collections.IEnumerator;
+using MonoBehaviour = UnityEngine.MonoBehaviour;
 
 namespace CityGenerator.StreetGraph {
     class HyperStreamlineGenerator {
@@ -45,42 +48,42 @@ namespace CityGenerator.StreetGraph {
             this.streetTemplate = template;
         }
 
-        public System.Collections.IEnumerator Run(UnityEngine.MonoBehaviour runner) {
+        public IEnumerator Run(MonoBehaviour runner) {
             // major streamlines
             yield return null;
-            UnityEngine.Debug.Log("Started scattering major seed points");
+            Debug.Log("Started scattering major seed points");
             yield return runner.StartCoroutine(ScatterSeedPoints(majorStreamlines));
-            UnityEngine.Debug.Log($"Done scattering major seed points, {majorStreamlines.Count} points scattered");
+            Debug.Log($"Done scattering major seed points, {majorStreamlines.Count} points scattered");
             yield return null;
-            UnityEngine.Debug.Log("Started growing major streamlines");
+            Debug.Log("Started growing major streamlines");
             yield return runner.StartCoroutine(GrowStreamlines(majorStreamlines, true));
-            UnityEngine.Debug.Log("Done growing major streamlines");
+            Debug.Log("Done growing major streamlines");
 
             // minor streamlines
             yield return null;
-            UnityEngine.Debug.Log("Started scattering minor seed points");
+            Debug.Log("Started scattering minor seed points");
             yield return runner.StartCoroutine(ScatterSeedPoints(minorStreamlines));
-            UnityEngine.Debug.Log($"Done scattering minor seed points, {minorStreamlines.Count} points scattered");
+            Debug.Log($"Done scattering minor seed points, {minorStreamlines.Count} points scattered");
             yield return null;
-            UnityEngine.Debug.Log("Started growing minor streamlines");
+            Debug.Log("Started growing minor streamlines");
             yield return runner.StartCoroutine(GrowStreamlines(minorStreamlines, false));
-            UnityEngine.Debug.Log("Done growing minor streamlines");
+            Debug.Log("Done growing minor streamlines");
 
             // identify intersections
             yield return null;
-            UnityEngine.Debug.Log("Started identifying intersections");
+            Debug.Log("Started identifying intersections");
             yield return runner.StartCoroutine(FindIntersections());
-            UnityEngine.Debug.Log($"Done identifying intersections");
+            Debug.Log($"Done identifying intersections");
 
             // build bridges
             yield return null;
-            UnityEngine.Debug.Log("Started identifying bridges");
+            Debug.Log("Started identifying bridges");
             yield return runner.StartCoroutine(IdentifyBridges(runner));
-            UnityEngine.Debug.Log($"Done identifying bridges");
+            Debug.Log($"Done identifying bridges");
 
         }
 
-        System.Collections.IEnumerator ScatterSeedPoints(List<HyperStreamline> streamlines) {
+        IEnumerator ScatterSeedPoints(List<HyperStreamline> streamlines) {
             int numSeedPoints = (int)(seedPointDensity * tensorField.width * tensorField.height);
             int2 numEdgeSeedPoints = (int2)(seedPointDensity *  new float2(tensorField.width, tensorField.height));
 
@@ -120,7 +123,7 @@ namespace CityGenerator.StreetGraph {
 
         }
 
-        System.Collections.IEnumerator GrowStreamlines(List<HyperStreamline> streamlines, bool useMajorEigenVectors) {
+        IEnumerator GrowStreamlines(List<HyperStreamline> streamlines, bool useMajorEigenVectors) {
             // this keeps track of which streamlines are still going, it starts off the same as the list of streamlines
             Queue<HyperStreamline> unfinishedStreamlines = new Queue<HyperStreamline>(streamlines);
 
@@ -192,12 +195,12 @@ namespace CityGenerator.StreetGraph {
 
                 yield return null;
 
-                UnityEngine.Debug.Log($"Completed streamline, {unfinishedStreamlines.Count} streamlines left");
+                Debug.Log($"Completed streamline, {unfinishedStreamlines.Count} streamlines left");
 
             }
         }
 
-        System.Collections.IEnumerator FindIntersections() {
+        IEnumerator FindIntersections() {
             // streamlines of the same order don't cross over, so won't have intersections,
             // however the streamlines of the any order may join at the end of the streamline
 
@@ -250,7 +253,7 @@ namespace CityGenerator.StreetGraph {
             yield return null;
         }
 
-        System.Collections.IEnumerator IdentifyBridges(UnityEngine.MonoBehaviour runner) {
+        IEnumerator IdentifyBridges(MonoBehaviour runner) {
             int numBridges = (int)(intersections.Count * bridgeProportion);
 
             // loop over all the intersections
@@ -266,7 +269,7 @@ namespace CityGenerator.StreetGraph {
 
         }
 
-        System.Collections.IEnumerator MakeBridge(HyperStreamlineIntersection intersection) {
+        IEnumerator MakeBridge(HyperStreamlineIntersection intersection) {
             float requiredMinSeperation = (streetTemplate.bridgingHeight / streetTemplate.maximumSteepness) + streetTemplate.minimumIntersectionRadius * 2;
 
             // pick a random streamline to make the bridge
@@ -290,7 +293,7 @@ namespace CityGenerator.StreetGraph {
                 if (iBridgeLeft == 0) {
                     break;
                 }
-                UnityEngine.Debug.Log($"iBridgeLeft: {iBridgeLeft}, num intersections: {bridgeStreamline.intersections.Count}");
+                Debug.Log($"iBridgeLeft: {iBridgeLeft}, num intersections: {bridgeStreamline.intersections.Count}");
                 HyperStreamlineIntersection leftIntersection = bridgeStreamline.intersections[iBridgeLeft];
                 HyperStreamlineIntersection nextLeftIntersection = bridgeStreamline.intersections[iBridgeLeft - 1];
 
