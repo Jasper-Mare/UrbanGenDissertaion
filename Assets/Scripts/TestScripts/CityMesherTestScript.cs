@@ -9,7 +9,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer), typeof(UniqueMesh))]
 public class CityMesherTestScript : MonoBehaviour {
-
     [SerializeField]
     bool shouldRegenerate = false;
     [SerializeField]
@@ -50,6 +49,12 @@ public class CityMesherTestScript : MonoBehaviour {
     [Header("Mesh Generator Properties")]
     [SerializeField]
     Material templateMaterial;
+    [SerializeField]
+    float bridgeMaximumSteepness = 1;
+    [SerializeField]
+    float bridgeHeight = 3f;
+    [SerializeField]
+    float intersectionMinimumRadius = 3f;
 
     float2 position = float2.zero;
 
@@ -70,17 +75,6 @@ public class CityMesherTestScript : MonoBehaviour {
 
         Vector3 pos3d = transform.position;
         position = new float2(pos3d.x, pos3d.z);
-
-        template.maximumSteepness = 1f;
-        template.minimumIntersectionRadius = 3f;
-        template.bridgingHeight = 3f;
-        template.outline = new OutlineShape(
-            new Vector2[] { new(1, 0), new(-1, 0) },
-            new Vector2[] { new(0, 1), new(0, 1) },
-            new float[] { 0.0f, 1.0f },
-            new int[] { 0, 1 }
-        );
-        template.roadMaterial = templateMaterial;
 
         shouldRegenerate = true;
     }
@@ -121,6 +115,17 @@ public class CityMesherTestScript : MonoBehaviour {
         uint seed = (generatorSeed == 0)
             ? (uint)System.DateTime.Now.Millisecond
             : generatorSeed;
+
+        template.maximumSteepness = bridgeMaximumSteepness;
+        template.minimumIntersectionRadius = intersectionMinimumRadius;
+        template.bridgingHeight = bridgeHeight;
+        template.outline = new OutlineShape(
+            new Vector2[] { new(1, 0), new(-1, 0) },
+            new Vector2[] { new(0, 1), new(0, 1) },
+            new float[] { 0.0f, 1.0f },
+            new int[] { 0, 1 }
+        );
+        template.roadMaterial = templateMaterial;
 
         MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
         TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
