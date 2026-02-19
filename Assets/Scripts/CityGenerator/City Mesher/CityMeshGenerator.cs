@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.Mathematics;
 using Debug = UnityEngine.Debug;
 using GameObject = UnityEngine.GameObject;
+using Handles = UnityEditor.Handles;
 using IEnumerator = System.Collections.IEnumerator;
 using MonoBehaviour = UnityEngine.MonoBehaviour;
 
@@ -17,6 +18,8 @@ namespace CityGenerator.MeshUtilities {
         List<HyperStreamline> inStreamlines;
         List<HyperStreamlineIntersection> inIntersections;
         List<Bridge> inBridges;
+
+        List<System.Tuple<UnityEngine.Vector3, string>> DebugInfo3D = new List<System.Tuple<UnityEngine.Vector3, string>>();
 
         public GameObject CityRoot;
 
@@ -124,9 +127,12 @@ namespace CityGenerator.MeshUtilities {
 
         float GetBridgeHeight(HyperStreamline streamline, int iPoint, List<Bridge> bridges) {
             Bridge currentBridge;
+            float2 pointPos = streamline.points[iPoint];
+            UnityEngine.Vector3 debugPos = new UnityEngine.Vector3(pointPos.x, 4, pointPos.y);
 
             // if the current streamline has no bridges then all points will be at 0
             if (bridges.Count == 0) {
+                DebugInfo3D.Add(System.Tuple.Create(debugPos, "floor"));
                 return 0;
             } else {
                 // otherwise find which bridge we are in
@@ -137,6 +143,7 @@ namespace CityGenerator.MeshUtilities {
             }
 
             if (currentBridge is not null) {
+                DebugInfo3D.Add(System.Tuple.Create(debugPos, "bridge"));
                 return streetTemplate.bridgingHeight;
             }
 
@@ -146,7 +153,7 @@ namespace CityGenerator.MeshUtilities {
 
             float bridgeRise = (streetTemplate.bridgingHeight / streetTemplate.maximumSteepness);
             float rampLength = bridgeRise + streetTemplate.minimumIntersectionRadius;
-            float2 pointPos = streamline.points[iPoint];
+
 
             foreach (Bridge bridge in bridges) {
                 float2 bridgeEdgeLPos = bridge.intersections[0].position;
@@ -156,6 +163,7 @@ namespace CityGenerator.MeshUtilities {
                 float rightDist = math.length(pointPos - bridgeEdgeRPos);
 
                 if (leftDist < rampLength) {
+                    DebugInfo3D.Add(System.Tuple.Create(debugPos, "left ramp"));
                     // we're in the left ramp
                     if (leftDist < streetTemplate.minimumIntersectionRadius) {
                         // we're in the intersection radius
@@ -168,6 +176,7 @@ namespace CityGenerator.MeshUtilities {
                         leftDist / rampLength
                     );
                 } else if (rightDist < rampLength) {
+                    DebugInfo3D.Add(System.Tuple.Create(debugPos, "right ramp"));
                     // we're in the right ramp
                     if (rightDist < streetTemplate.minimumIntersectionRadius) {
                         // we're in the intersection radius
@@ -185,6 +194,13 @@ namespace CityGenerator.MeshUtilities {
 
             return 0;
         }
+
+        public void debugRender() {
+            foreach (var debug in DebugInfo3D) {
+                Handles.Label(debug.Item1, debug.Item2);
+            }
+        }
+
 
 
     }

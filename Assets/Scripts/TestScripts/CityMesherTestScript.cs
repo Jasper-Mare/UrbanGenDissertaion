@@ -151,5 +151,12 @@ public class CityMesherTestScript : MonoBehaviour {
         Destroy(visMatInstance);
     }
 
+    void OnGUI() {
+        if (meshGenerator is null) {
+            return;
+        }
+        meshGenerator.debugRender();
+
+    }
 }
 
