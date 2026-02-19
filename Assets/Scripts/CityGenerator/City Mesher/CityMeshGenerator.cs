@@ -136,17 +136,54 @@ namespace CityGenerator.MeshUtilities {
                 ).ElementAtOrDefault(0);
             }
 
-            if (currentBridge is null) {
-                return 0;
-            } else {
+            if (currentBridge is not null) {
                 return streetTemplate.bridgingHeight;
             }
 
-            // TODO: need to ease in and out of bridges
+            // not in a bridge, maybe near one?
+            // if we're near we're going to build the ramp
+            // if we're far it'll be on the floor
 
-            // float bridgeRise = (streetTemplate.bridgingHeight / streetTemplate.maximumSteepness);
-            // float minSeperation = bridgeRise + 2 * streetTemplate.minimumIntersectionRadius;
+            float bridgeRise = (streetTemplate.bridgingHeight / streetTemplate.maximumSteepness);
+            float rampLength = bridgeRise + streetTemplate.minimumIntersectionRadius;
+            float2 pointPos = streamline.points[iPoint];
 
+            foreach (Bridge bridge in bridges) {
+                float2 bridgeEdgeLPos = bridge.intersections[0].position;
+                float2 bridgeEdgeRPos = bridge.intersections[bridge.intersections.Count - 1].position;
+
+                float leftDist = math.length(pointPos - bridgeEdgeLPos);
+                float rightDist = math.length(pointPos - bridgeEdgeRPos);
+
+                if (leftDist < rampLength) {
+                    // we're in the left ramp
+                    if (leftDist < streetTemplate.minimumIntersectionRadius) {
+                        // we're in the intersection radius
+                        return streetTemplate.bridgingHeight;
+                    }
+                    // we're in the ramp size
+                    return math.smoothstep(
+                        0,
+                        streetTemplate.bridgingHeight,
+                        leftDist / rampLength
+                    );
+                } else if (rightDist < rampLength) {
+                    // we're in the right ramp
+                    if (rightDist < streetTemplate.minimumIntersectionRadius) {
+                        // we're in the intersection radius
+                        return streetTemplate.bridgingHeight;
+                    }
+                    // we're in the ramp size
+                    return math.smoothstep(
+                        0,
+                        streetTemplate.bridgingHeight,
+                        rightDist / rampLength
+                    );
+                }
+                // if we're not in either, keep going
+            }
+
+            return 0;
         }
 
 
