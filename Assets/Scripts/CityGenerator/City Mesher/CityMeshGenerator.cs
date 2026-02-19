@@ -84,14 +84,14 @@ namespace CityGenerator.MeshUtilities {
                     float2 pA = streamline.points[i - 1];
                     float2 pB = streamline.points[i];
 
-                    float3 pA3D = new float3(pA.x, height, pA.y);
-                    float3 pB3D = new float3(pB.x, points[i - 1].position.y, pB.y);
+                    float3 pA3D = new float3(pA.x, points[i - 1].position.y, pA.y);
+                    float3 pB3D = new float3(pB.x, height, pB.y);
 
                     float3 tangent = math.normalize(pB3D - pA3D);
                     float3 binormal = math.normalize(math.cross(new float3(0, 1, 0), tangent));
                     float3 normal = math.cross(tangent, binormal);
 
-                    points[i] = new OrientedPoint((UnityEngine.Vector3)pA3D, UnityEngine.Quaternion.LookRotation(tangent, normal));
+                    points[i] = new OrientedPoint((UnityEngine.Vector3)pB3D, UnityEngine.Quaternion.LookRotation(tangent, normal));
                 }
 
                 // debug oriented points
