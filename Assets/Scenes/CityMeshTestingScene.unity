@@ -378,7 +378,7 @@ MonoBehaviour:
   lookAheadDist: 15
   seedDensityCount: 4
   seedDensityLength: 1000
-  bridgeProportion: 0.1
+  bridgeProportion: 0.516
   templateMaterial: {fileID: 2100000, guid: 03ff1402fa34e974aae06a20c78ffd81, type: 2}
 --- !u!1 &1778080571
 GameObject:

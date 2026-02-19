@@ -34,12 +34,13 @@ public class TestScript : MonoBehaviour {
 
         BezierCurve curve = new BezierCurve( splinePoints.Select(t => t.position).ToArray() );
         OrientedPoint[] points = curve.SampleOrientedPoints(sampleStep);
-        foreach (OrientedPoint pt in points) {
-            GameObject objDebug = new GameObject($"debug{pt.GetHashCode()}");
-            objDebug.transform.parent = this.transform;
-            var debug = objDebug.AddComponent<OrientedPointDebug>();
-            debug.point = pt;
-        }
+        // debug oriented points
+        //foreach (OrientedPoint pt in points) {
+        //    GameObject objDebug = new GameObject($"debug{pt.GetHashCode()}");
+        //    objDebug.transform.parent = this.transform;
+        //    var debug = objDebug.AddComponent<OrientedPointDebug>();
+        //    debug.point = pt;
+        //}
 
         MeshCreator.ExtrudeMeshAlongOrientedPath(MeshObject.Mesh, outline, points);
 

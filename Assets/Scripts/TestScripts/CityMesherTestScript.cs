@@ -53,6 +53,8 @@ public class CityMesherTestScript : MonoBehaviour {
 
     float2 position = float2.zero;
 
+    private GameObject CityRoot;
+
     NetworkElementTemplate template = new NetworkElementTemplate();
 
     float seedDensity {
@@ -111,6 +113,11 @@ public class CityMesherTestScript : MonoBehaviour {
     }
 
     IEnumerator Generate() {
+        if (CityRoot is not null) {
+            Destroy(CityRoot);
+            CityRoot = null;
+        }
+
         uint seed = (generatorSeed == 0)
             ? (uint)System.DateTime.Now.Millisecond
             : generatorSeed;
@@ -132,6 +139,7 @@ public class CityMesherTestScript : MonoBehaviour {
 
         meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
         yield return StartCoroutine(meshGenerator.Run(this));
+        CityRoot = meshGenerator.CityRoot;
     }
 
     void OnDestroy() {

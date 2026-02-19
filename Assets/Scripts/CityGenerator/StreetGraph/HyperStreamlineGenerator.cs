@@ -293,7 +293,7 @@ namespace CityGenerator.StreetGraph {
                 if (iBridgeLeft == 0) {
                     break;
                 }
-                Debug.Log($"iBridgeLeft: {iBridgeLeft}, num intersections: {bridgeStreamline.intersections.Count}");
+
                 HyperStreamlineIntersection leftIntersection = bridgeStreamline.intersections[iBridgeLeft];
                 HyperStreamlineIntersection nextLeftIntersection = bridgeStreamline.intersections[iBridgeLeft - 1];
 
