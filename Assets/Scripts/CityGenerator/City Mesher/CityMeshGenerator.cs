@@ -5,7 +5,6 @@ using System.Linq;
 using Unity.Mathematics;
 using Debug = UnityEngine.Debug;
 using GameObject = UnityEngine.GameObject;
-using Handles = UnityEditor.Handles;
 using IEnumerator = System.Collections.IEnumerator;
 using MonoBehaviour = UnityEngine.MonoBehaviour;
 
@@ -19,7 +18,7 @@ namespace CityGenerator.MeshUtilities {
         List<HyperStreamlineIntersection> inIntersections;
         List<Bridge> inBridges;
 
-        List<System.Tuple<UnityEngine.Vector3, string>> DebugInfo3D = new List<System.Tuple<UnityEngine.Vector3, string>>();
+        public List<System.Tuple<UnityEngine.Vector3, string>> DebugInfo3D = new List<System.Tuple<UnityEngine.Vector3, string>>();
 
         public GameObject CityRoot;
 
@@ -155,6 +154,7 @@ namespace CityGenerator.MeshUtilities {
             float rampLength = bridgeRise + streetTemplate.minimumIntersectionRadius;
 
 
+            // should probably go for the closest bridge rather than the first bridge that works
             foreach (Bridge bridge in bridges) {
                 float2 bridgeEdgeLPos = bridge.intersections[0].position;
                 float2 bridgeEdgeRPos = bridge.intersections[bridge.intersections.Count - 1].position;
@@ -162,45 +162,44 @@ namespace CityGenerator.MeshUtilities {
                 float leftDist = math.length(pointPos - bridgeEdgeLPos);
                 float rightDist = math.length(pointPos - bridgeEdgeRPos);
 
-                if (leftDist < rampLength) {
-                    DebugInfo3D.Add(System.Tuple.Create(debugPos, "left ramp"));
+                if (leftDist < rightDist && leftDist < rampLength) {
+                    float height;
                     // we're in the left ramp
                     if (leftDist < streetTemplate.minimumIntersectionRadius) {
                         // we're in the intersection radius
-                        return streetTemplate.bridgingHeight;
+                        height = streetTemplate.bridgingHeight;
+                    } else {
+                        // we're in the ramp size
+                        height = streetTemplate.bridgingHeight * math.smoothstep(
+                            rampLength,
+                            0,
+                            leftDist
+                        );
                     }
-                    // we're in the ramp size
-                    return math.smoothstep(
-                        0,
-                        streetTemplate.bridgingHeight,
-                        leftDist / rampLength
-                    );
+                    DebugInfo3D.Add(System.Tuple.Create(debugPos, $"left ramp\nLeftDist: {leftDist} \nRightDist: {rightDist} \nHeight: {height}"));
+                    return height;
                 } else if (rightDist < rampLength) {
-                    DebugInfo3D.Add(System.Tuple.Create(debugPos, "right ramp"));
+                    float height;
                     // we're in the right ramp
                     if (rightDist < streetTemplate.minimumIntersectionRadius) {
                         // we're in the intersection radius
-                        return streetTemplate.bridgingHeight;
+                        height = streetTemplate.bridgingHeight;
+                    } else {
+                        // we're in the ramp size
+                        height = streetTemplate.bridgingHeight * math.smoothstep(
+                            rampLength,
+                            0,
+                            rightDist
+                        );
                     }
-                    // we're in the ramp size
-                    return math.smoothstep(
-                        0,
-                        streetTemplate.bridgingHeight,
-                        rightDist / rampLength
-                    );
+                    DebugInfo3D.Add(System.Tuple.Create(debugPos, $"right ramp\nLeftDist: {leftDist} \nRightDist: {rightDist} \nHeight: {height}"));
+                    return height;
                 }
                 // if we're not in either, keep going
             }
 
             return 0;
         }
-
-        public void debugRender() {
-            foreach (var debug in DebugInfo3D) {
-                Handles.Label(debug.Item1, debug.Item2);
-            }
-        }
-
 
 
     }

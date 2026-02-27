@@ -5,6 +5,7 @@ using CityGenerator.Templates;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer), typeof(UniqueMesh))]
@@ -151,11 +152,19 @@ public class CityMesherTestScript : MonoBehaviour {
         Destroy(visMatInstance);
     }
 
-    void OnGUI() {
+    // draw debug stuff
+    void OnDrawGizmos() {
         if (meshGenerator is null) {
             return;
         }
-        meshGenerator.debugRender();
+
+        foreach (var debug in meshGenerator.DebugInfo3D) {
+            // skip everything outside a 100m radius
+            if ((SceneView.lastActiveSceneView.camera.transform.position - debug.Item1).magnitude > 100) {
+                continue;
+            }
+            Handles.Label(debug.Item1, debug.Item2);
+        }
 
     }
 }
