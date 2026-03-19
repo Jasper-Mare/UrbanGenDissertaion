@@ -159,7 +159,7 @@ namespace CityGenerator.StreetGraph {
                     // find next position
                     float2 nextPos = getNextGridPoint(currentPos, eigenvector);
 
-                    // if the streamline gets too close
+                    // if the streamline gets too close to another streamline
                     foreach (HyperStreamline compStreamline in streamlines) {
                         // if comparing with itself, only check the tail
                         if (compStreamline == streamline) {

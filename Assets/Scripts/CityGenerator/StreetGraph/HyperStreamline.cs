@@ -38,7 +38,7 @@ namespace CityGenerator.StreetGraph {
                 for (int i = 1; i < points.Count; i++) {
                     Debug.DrawRay(new Vector3(points[i].x, 0, points[i].y), Vector3.up, Color.white);
                     Debug.DrawLine(new Vector3(points[i].x, i*0.01f, points[i].y), new Vector3(points[i-1].x, 0.01f * (i-1), points[i-1].y),
-                        Color.HSVToRGB((math.sin(PreviousDirection.x) * math.cos(PreviousDirection.y + 1)) % 1, 1, 1)
+                        Color.HSVToRGB(math.abs(math.sin(PreviousDirection.x) * math.cos(PreviousDirection.y + 1)) % 1, 1, 1)
                     );
                 }
             }
