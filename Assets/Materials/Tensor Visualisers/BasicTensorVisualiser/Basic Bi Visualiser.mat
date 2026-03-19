@@ -55,15 +55,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Line_Scale: 7.5
+    - _Line_Scale: 7.85
     - _Major_or_Minor: 0
     - _Primary_Influence: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Secondary_Influence: 0
     m_Colors:
-    - _MajorColour: {r: 1, g: 0, b: 1, a: 1}
-    - _MinorColour: {r: 0, g: 1, b: 0, a: 1}
+    - _MajorColour: {r: 0.88699996, g: 0.88699996, b: 0.88699996, a: 1}
+    - _MinorColour: {r: 0.13872, g: 0.816, b: 0.13872, a: 1}
     - _Number_Of_Tensors_X_Y: {r: 100, g: 100, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

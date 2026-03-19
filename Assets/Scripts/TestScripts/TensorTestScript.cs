@@ -1,7 +1,6 @@
 ﻿using CityGenerator.FlowFields;
 using CityGenerator.MeshUtilities;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -13,11 +12,6 @@ public class TensorTestScript : MonoBehaviour {
 
     [SerializeField]
     float angle = 0;
-
-    [SerializeField]
-    Transform[] splinePoints;
-    [SerializeField]
-    float sampleStep;
 
     [SerializeField]
     float decayConst = 0.0005f;
@@ -61,36 +55,43 @@ public class TensorTestScript : MonoBehaviour {
             MeshCreator.CreatePlane(mesh, xSize, zSize);
             field.decayConst = decayConst;
 
-            float2 pos = new float2(xSize * 0.5f, zSize * 0.5f);
             switch (basisField) {
                 case 0:
-                field.ApplyGridBasisField(pos, math.radians(angle), 2);
+                field.ApplyGridBasisField(
+                    new float2(xSize * 0.5f, zSize * 0.5f),
+                    math.radians(angle),
+                    2
+                );
                 break;
+
                 case 1:
-                field.ApplyCenterBasisField(pos);
+                field.ApplyCenterBasisField(new float2(xSize * 0.25f, zSize * 0.75f));
                 break;
+
                 case 2:
-                field.ApplyNodeBasisField(pos);
+                field.ApplyNodeBasisField(new float2(xSize * 0.75f, zSize * 0.75f));
                 break;
+
                 case 3:
-                field.ApplySaddleBasisField(pos);
+                field.ApplySaddleBasisField(new float2(xSize * 0.75f, zSize * 0.25f));
                 break;
+
                 case 4:
-                field.ApplyTrisectorBasisField(pos);
+                field.ApplyTrisectorBasisField(new float2(xSize * 0.25f, zSize * 0.25f));
                 break;
-                case 5: {
-                    if (splinePoints.Length != 4) {
-                        break;
-                    }
 
-                    BezierCurve curve = new BezierCurve( splinePoints.Select(t => t.position).ToArray() );
-                    OrientedPoint[] points = curve.SampleOrientedPoints(sampleStep);
+                case 5:
+                field.ApplyGridBasisField(
+                    new float2(xSize * 0.5f, zSize * 0.5f),
+                    math.radians(angle),
+                    2
+                );
 
-                    debugPoints.Clear();
-                    debugPoints.AddRange(points);
+                field.ApplyCenterBasisField(new float2(xSize * 0.25f, zSize * 0.75f));
+                field.ApplyNodeBasisField(new float2(xSize * 0.75f, zSize * 0.75f));
+                field.ApplySaddleBasisField(new float2(xSize * 0.75f, zSize * 0.25f));
+                field.ApplyTrisectorBasisField(new float2(xSize * 0.25f, zSize * 0.25f));
 
-                    field.ApplyBoundryField(points);
-                }
                 break;
             }
             DebugFlow();
@@ -99,12 +100,6 @@ public class TensorTestScript : MonoBehaviour {
             updateVisualisation = false;
         }
 
-        if (basisField == 5) {
-            foreach (OrientedPoint point in debugPoints) {
-                Debug.DrawRay(point.position, point.LocalToWorldDirection(Vector3.forward), Color.orange);
-                Debug.DrawRay(point.position, Vector3.up);
-            }
-        }
     }
 
     void DebugFlow() {
