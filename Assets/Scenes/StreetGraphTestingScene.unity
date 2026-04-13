@@ -302,6 +302,7 @@ MonoBehaviour:
   lookAheadDist: 15
   seedDensityCount: 4
   seedDensityLength: 1000
+  bridgeProportion: 0.6
 --- !u!114 &1056260890
 MonoBehaviour:
   m_ObjectHideFlags: 0

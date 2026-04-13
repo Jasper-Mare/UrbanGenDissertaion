@@ -13,6 +13,7 @@ namespace CityGenerator {
         public GameObject CityRoot;
         private HyperStreamlineGenerator streamlineGenerator;
         private CityMeshGenerator meshGenerator;
+        private BridgeDesignator bridger;
 
         Mesh mesh;
         Material visualiserMaterial;
@@ -70,22 +71,29 @@ namespace CityGenerator {
             CityRoot = null;
         }
 
-        public IEnumerator Run(MonoBehaviour runner) {
+        public IEnumerator Run(MonoBehaviour runner, bool showDebug) {
 
-            MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
             TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
-            field.Visualise(visualiserMaterial);
+            if (showDebug) {
+                MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
+                field.Visualise(visualiserMaterial);
+            }
             yield return null;
 
-            streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, bridgeProportion, seed, template);
+            streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
             yield return runner.StartCoroutine(streamlineGenerator.Run(runner));
             yield return null;
 
             List<HyperStreamline> streamlines = new List<HyperStreamline>();
             streamlines.AddRange(streamlineGenerator.majorStreamlines);
             streamlines.AddRange(streamlineGenerator.minorStreamlines);
-            List<HyperStreamlineIntersection> intersections = streamlineGenerator.intersections;
-            List<Bridge> bridges = streamlineGenerator.bridges;
+
+            bridger = new BridgeDesignator(streamlineGenerator.majorStreamlines, streamlineGenerator.minorStreamlines, bridgeProportion, template, seed);
+            yield return runner.StartCoroutine(bridger.Run(runner));
+            yield return null;
+
+            List<HyperStreamlineIntersection> intersections = bridger.intersections;
+            List<Bridge> bridges = bridger.bridges;
 
             meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
             yield return runner.StartCoroutine(meshGenerator.Run(runner));
@@ -100,10 +108,13 @@ namespace CityGenerator {
                 foreach (HyperStreamline streamline in streamlineGenerator.minorStreamlines) {
                     streamline.DebugRender();
                 }
-                foreach (HyperStreamlineIntersection intersection in streamlineGenerator.intersections) {
+            }
+
+            if (bridger is not null) {
+                foreach (HyperStreamlineIntersection intersection in bridger.intersections) {
                     intersection.DebugRender();
                 }
-                foreach (Bridge bridge in streamlineGenerator.bridges) {
+                foreach (Bridge bridge in bridger.bridges) {
                     bridge.DebugRender();
                 }
 

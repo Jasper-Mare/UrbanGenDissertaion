@@ -2,6 +2,7 @@
 using CityGenerator.MeshUtilities;
 using CityGenerator.StreetGraph;
 using CityGenerator.Templates;
+using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ public class StreetGraphTestScript : MonoBehaviour {
     private Renderer rend;
     private Material visMatInstance;
     private HyperStreamlineGenerator generator;
+    private BridgeDesignator bridger;
 
     [Header("Tensorfield Generator Properties")]
     [SerializeField]
@@ -62,7 +64,7 @@ public class StreetGraphTestScript : MonoBehaviour {
         Vector3 pos3d = transform.position;
         position = new float2(pos3d.x, pos3d.z);
 
-        template.maximumSteepness = 1f;
+        template.maximumSteepness = 0.1f;
         template.minimumIntersectionRadius = 3f;
         template.bridgingHeight = 3f;
 
@@ -72,7 +74,7 @@ public class StreetGraphTestScript : MonoBehaviour {
     void Update() {
 
         if (shouldRegenerate) {
-            Generate();
+            StartCoroutine(Generate());
 
             shouldRegenerate = false;
         }
@@ -84,10 +86,13 @@ public class StreetGraphTestScript : MonoBehaviour {
             foreach (HyperStreamline streamline in generator.minorStreamlines) {
                 streamline.DebugRender();
             }
-            foreach (HyperStreamlineIntersection intersection in generator.intersections) {
+        }
+
+        if (bridger is not null) {
+            foreach (HyperStreamlineIntersection intersection in bridger.intersections) {
                 intersection.DebugRender();
             }
-            foreach (Bridge bridge in generator.bridges) {
+            foreach (Bridge bridge in bridger.bridges) {
                 bridge.DebugRender();
             }
 
@@ -96,16 +101,25 @@ public class StreetGraphTestScript : MonoBehaviour {
 
     }
 
-    void Generate() {
+    IEnumerator Generate() {
         uint seed = (generatorSeed == 0)
             ? (uint)System.DateTime.Now.Millisecond
             : generatorSeed;
 
+        Debug.Log("Running TensorFieldGenerator");
         MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
         TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
         field.Visualise(visMatInstance);
-        generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, bridgeProportion, seed, template);
-        StartCoroutine(generator.Run(this));
+
+        Debug.Log("Running HyperStreamlineGenerator");
+        generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
+        yield return StartCoroutine(generator.Run(this));
+        yield return null;
+
+        Debug.Log("Running BridgeDesignator");
+        bridger = new BridgeDesignator(generator.majorStreamlines, generator.minorStreamlines, bridgeProportion, template, seed);
+        yield return StartCoroutine(bridger.Run(this));
+        yield return null;
     }
 
     void OnDestroy() {

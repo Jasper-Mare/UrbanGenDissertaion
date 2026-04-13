@@ -147,7 +147,7 @@ public class CityMesherTestScript : MonoBehaviour {
             bridgeProportion, template, seed
         );
 
-        yield return StartCoroutine(gen.Run(this));
+        yield return StartCoroutine(gen.Run(this, true));
         CityRoot = gen.CityRoot;
     }
 
