@@ -1,10 +1,8 @@
 ﻿using CityGenerator;
 using CityGenerator.MeshUtilities;
-using CityGenerator.StreetGraph;
 using CityGenerator.Templates;
 using System.Collections;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer), typeof(UniqueMesh))]
@@ -17,8 +15,7 @@ public class CityMesherTestScript : MonoBehaviour {
     private Mesh mesh;
     private Renderer rend;
     private Material visMatInstance;
-    private HyperStreamlineGenerator streamlineGenerator;
-    private CityMeshGenerator meshGenerator;
+    private Generator gen;
 
     [Header("Tensorfield Generator Properties")]
     [SerializeField]
@@ -128,22 +125,9 @@ public class CityMesherTestScript : MonoBehaviour {
             shouldRegenerate = false;
         }
 
-        if (streamlineGenerator is not null) {
-            foreach (HyperStreamline streamline in streamlineGenerator.majorStreamlines) {
-                streamline.DebugRender();
-            }
-            foreach (HyperStreamline streamline in streamlineGenerator.minorStreamlines) {
-                streamline.DebugRender();
-            }
-            foreach (HyperStreamlineIntersection intersection in streamlineGenerator.intersections) {
-                intersection.DebugRender();
-            }
-            foreach (Bridge bridge in streamlineGenerator.bridges) {
-                bridge.DebugRender();
-            }
-
+        if (gen is not null) {
+            gen.DebugDraw();
         }
-
 
     }
 
@@ -157,7 +141,7 @@ public class CityMesherTestScript : MonoBehaviour {
             ? (uint)System.DateTime.Now.Millisecond
             : generatorSeed;
 
-        Generator gen = new Generator(mesh, visMatInstance, position, size,
+        gen = new Generator(mesh, visMatInstance, position, size,
             numberOfTensors, numIterations, decayConstant,
             maxLength, minSeperation, lookAheadDist, seedDensity,
             bridgeProportion, template, seed
@@ -173,18 +157,8 @@ public class CityMesherTestScript : MonoBehaviour {
 
     // draw debug stuff
     void OnDrawGizmos() {
-        if (meshGenerator is null) {
-            return;
+        if (gen is not null) {
+            gen.DrawDebugGizmos();
         }
-
-        foreach (var debug in meshGenerator.DebugInfo3D) {
-            // skip everything outside a 100m radius
-            if ((SceneView.lastActiveSceneView.camera.transform.position - debug.Item1).magnitude > 100) {
-                continue;
-            }
-            Handles.Label(debug.Item1, debug.Item2);
-        }
-
     }
 }
-

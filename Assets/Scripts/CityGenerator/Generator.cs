@@ -4,12 +4,15 @@ using CityGenerator.StreetGraph;
 using CityGenerator.Templates;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using IEnumerator = System.Collections.IEnumerator;
 
 namespace CityGenerator {
     class Generator {
         public GameObject CityRoot;
+        private HyperStreamlineGenerator streamlineGenerator;
+        private CityMeshGenerator meshGenerator;
 
         Mesh mesh;
         Material visualiserMaterial;
@@ -74,7 +77,7 @@ namespace CityGenerator {
             field.Visualise(visualiserMaterial);
             yield return null;
 
-            HyperStreamlineGenerator streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, bridgeProportion, seed, template);
+            streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, bridgeProportion, seed, template);
             yield return runner.StartCoroutine(streamlineGenerator.Run(runner));
             yield return null;
 
@@ -84,11 +87,43 @@ namespace CityGenerator {
             List<HyperStreamlineIntersection> intersections = streamlineGenerator.intersections;
             List<Bridge> bridges = streamlineGenerator.bridges;
 
-            CityMeshGenerator meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
+            meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
             yield return runner.StartCoroutine(meshGenerator.Run(runner));
             CityRoot = meshGenerator.CityRoot;
         }
 
+        public void DebugDraw() {
+            if (streamlineGenerator is not null) {
+                foreach (HyperStreamline streamline in streamlineGenerator.majorStreamlines) {
+                    streamline.DebugRender();
+                }
+                foreach (HyperStreamline streamline in streamlineGenerator.minorStreamlines) {
+                    streamline.DebugRender();
+                }
+                foreach (HyperStreamlineIntersection intersection in streamlineGenerator.intersections) {
+                    intersection.DebugRender();
+                }
+                foreach (Bridge bridge in streamlineGenerator.bridges) {
+                    bridge.DebugRender();
+                }
+
+            }
+        }
+
+        public void DrawDebugGizmos() {
+            if (meshGenerator is null) {
+                return;
+            }
+
+            foreach (var debug in meshGenerator.DebugInfo3D) {
+                // skip everything outside a 100m radius
+                if ((SceneView.lastActiveSceneView.camera.transform.position - debug.Item1).magnitude > 100) {
+                    continue;
+                }
+                Handles.Label(debug.Item1, debug.Item2);
+            }
+
+        }
 
     }
 }
