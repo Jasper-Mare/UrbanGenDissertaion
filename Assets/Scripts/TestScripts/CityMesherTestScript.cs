@@ -1,9 +1,8 @@
-﻿using CityGenerator.FlowFields;
+﻿using CityGenerator;
 using CityGenerator.MeshUtilities;
 using CityGenerator.StreetGraph;
 using CityGenerator.Templates;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -77,46 +76,6 @@ public class CityMesherTestScript : MonoBehaviour {
         Vector3 pos3d = transform.position;
         position = new float2(pos3d.x, pos3d.z);
 
-        shouldRegenerate = true;
-    }
-
-    void Update() {
-
-        if (shouldRegenerate) {
-            StartCoroutine(Generate());
-
-            shouldRegenerate = false;
-        }
-
-        if (streamlineGenerator is not null) {
-            foreach (HyperStreamline streamline in streamlineGenerator.majorStreamlines) {
-                streamline.DebugRender();
-            }
-            foreach (HyperStreamline streamline in streamlineGenerator.minorStreamlines) {
-                streamline.DebugRender();
-            }
-            foreach (HyperStreamlineIntersection intersection in streamlineGenerator.intersections) {
-                intersection.DebugRender();
-            }
-            foreach (Bridge bridge in streamlineGenerator.bridges) {
-                bridge.DebugRender();
-            }
-
-        }
-
-
-    }
-
-    IEnumerator Generate() {
-        if (CityRoot is not null) {
-            Destroy(CityRoot);
-            CityRoot = null;
-        }
-
-        uint seed = (generatorSeed == 0)
-            ? (uint)System.DateTime.Now.Millisecond
-            : generatorSeed;
-
         template.maximumSteepness = bridgeMaximumSteepness;
         template.minimumIntersectionRadius = intersectionMinimumRadius;
         template.bridgingHeight = bridgeHeight;
@@ -158,24 +117,54 @@ public class CityMesherTestScript : MonoBehaviour {
         );
         template.roadMaterial = templateMaterial;
 
-        MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
-        TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
-        field.Visualise(visMatInstance);
-        yield return null;
+        shouldRegenerate = true;
+    }
 
-        streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, bridgeProportion, seed, template);
-        yield return StartCoroutine(streamlineGenerator.Run(this));
-        yield return null;
+    void Update() {
 
-        List<HyperStreamline> streamlines = new List<HyperStreamline>();
-        streamlines.AddRange(streamlineGenerator.majorStreamlines);
-        streamlines.AddRange(streamlineGenerator.minorStreamlines);
-        List<HyperStreamlineIntersection> intersections = streamlineGenerator.intersections;
-        List<Bridge> bridges = streamlineGenerator.bridges;
+        if (shouldRegenerate) {
+            StartCoroutine(RunGenerator());
 
-        meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
-        yield return StartCoroutine(meshGenerator.Run(this));
-        CityRoot = meshGenerator.CityRoot;
+            shouldRegenerate = false;
+        }
+
+        if (streamlineGenerator is not null) {
+            foreach (HyperStreamline streamline in streamlineGenerator.majorStreamlines) {
+                streamline.DebugRender();
+            }
+            foreach (HyperStreamline streamline in streamlineGenerator.minorStreamlines) {
+                streamline.DebugRender();
+            }
+            foreach (HyperStreamlineIntersection intersection in streamlineGenerator.intersections) {
+                intersection.DebugRender();
+            }
+            foreach (Bridge bridge in streamlineGenerator.bridges) {
+                bridge.DebugRender();
+            }
+
+        }
+
+
+    }
+
+    IEnumerator RunGenerator() {
+        if (CityRoot is not null) {
+            Destroy(CityRoot);
+            CityRoot = null;
+        }
+
+        uint seed = (generatorSeed == 0)
+            ? (uint)System.DateTime.Now.Millisecond
+            : generatorSeed;
+
+        Generator gen = new Generator(mesh, visMatInstance, position, size,
+            numberOfTensors, numIterations, decayConstant,
+            maxLength, minSeperation, lookAheadDist, seedDensity,
+            bridgeProportion, template, seed
+        );
+
+        yield return StartCoroutine(gen.Run(this));
+        CityRoot = gen.CityRoot;
     }
 
     void OnDestroy() {
