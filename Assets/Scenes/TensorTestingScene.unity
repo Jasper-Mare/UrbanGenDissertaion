@@ -434,7 +434,7 @@ MonoBehaviour:
   angle: 60
   decayConst: 0.001
   updateVisualisation: 0
-  visualierMaterial: {fileID: 2100000, guid: fb7419d6fd51ccc4a9e356b8246e4c6a, type: 2}
+  visualierMaterial: {fileID: 2100000, guid: 25c7d4db30ceec346954309fb25bee0f, type: 2}
   basisField: 0
 --- !u!23 &448460280
 MeshRenderer:
@@ -461,7 +461,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: fb7419d6fd51ccc4a9e356b8246e4c6a, type: 2}
+  - {fileID: 2100000, guid: 25c7d4db30ceec346954309fb25bee0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
