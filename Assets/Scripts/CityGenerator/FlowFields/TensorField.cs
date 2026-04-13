@@ -206,7 +206,7 @@ References:
 
 [4] https://thegreatpug.com/help/srgb/
 
-/*
+/* Conversation with ChatGPT 4o
 In "Interactive Procedural Street Modeling" by Chen et al they use a tensor field, how should these tensors and tensor fields be represented in code?
 
 In **Chen et al., “Interactive Procedural Street Modeling”**, the *tensor field* refers to a **direction field** constructed from **2nd-order symmetric tensors** that encode preferred road orientations (e.g., orthogonal or multi-modal directions).
