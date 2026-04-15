@@ -489,13 +489,13 @@ MonoBehaviour:
   maxLength: 500
   minSeperation: 10
   lookAheadDist: 15
-  seedDensityCount: 4
+  seedDensityCount: 5
   seedDensityLength: 1000
-  bridgeProportion: 1
-  templateMaterial: {fileID: 2100000, guid: 25fceae29c7013748bf157df1d261037, type: 2}
+  bridgeProportion: 0.4
   bridgeMaximumSteepness: 0.1
   bridgeHeight: 3
   intersectionMinimumRadius: 3
+  templateMaterial: {fileID: 2100000, guid: 25fceae29c7013748bf157df1d261037, type: 2}
 --- !u!1 &1778080571
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,7 +33,7 @@ public class CityMesherTestScript : MonoBehaviour {
     float maxLength = 50;
     [SerializeField]
     float minSeperation = 1;
-    [SerializeField]
+    //[SerializeField]
     float lookAheadDist = 5;
     [SerializeField]
     float seedDensityCount = 1f;
