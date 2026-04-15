@@ -34,26 +34,26 @@ namespace CityGenerator.StreetGraph {
             this.seedPointDensity = seedPointDensity;
         }
 
-        public IEnumerator Run(MonoBehaviour runner) {
+        public IEnumerator Run(MonoBehaviour runner, bool showDebug) {
             // major streamlines
             yield return null;
-            Debug.Log("Started scattering major seed points");
+            if (showDebug) Debug.Log("CityGenerator - HyperStreamlineGenerator: Started scattering major seed points");
             yield return runner.StartCoroutine(ScatterSeedPoints(majorStreamlines));
-            Debug.Log($"Done scattering major seed points, {majorStreamlines.Count} points scattered");
+            if (showDebug) Debug.Log($"CityGenerator - HyperStreamlineGenerator: Done scattering major seed points, {majorStreamlines.Count} points scattered");
             yield return null;
-            Debug.Log("Started growing major streamlines");
-            yield return runner.StartCoroutine(GrowStreamlines(majorStreamlines, true));
-            Debug.Log("Done growing major streamlines");
+            if (showDebug) Debug.Log("CityGenerator - HyperStreamlineGenerator: Started growing major streamlines");
+            yield return runner.StartCoroutine(GrowStreamlines(majorStreamlines, true, showDebug));
+            if (showDebug) Debug.Log("CityGenerator - HyperStreamlineGenerator: Done growing major streamlines");
 
             // minor streamlines
             yield return null;
-            Debug.Log("Started scattering minor seed points");
+            if (showDebug) Debug.Log("CityGenerator - HyperStreamlineGenerator: Started scattering minor seed points");
             yield return runner.StartCoroutine(ScatterSeedPoints(minorStreamlines));
-            Debug.Log($"Done scattering minor seed points, {minorStreamlines.Count} points scattered");
+            if (showDebug) Debug.Log($"CityGenerator - HyperStreamlineGenerator: Done scattering minor seed points, {minorStreamlines.Count} points scattered");
             yield return null;
-            Debug.Log("Started growing minor streamlines");
-            yield return runner.StartCoroutine(GrowStreamlines(minorStreamlines, false));
-            Debug.Log("Done growing minor streamlines");
+            if (showDebug) Debug.Log("CityGenerator - HyperStreamlineGenerator: Started growing minor streamlines");
+            yield return runner.StartCoroutine(GrowStreamlines(minorStreamlines, false, showDebug));
+            if (showDebug) Debug.Log("CityGenerator - HyperStreamlineGenerator: Done growing minor streamlines");
 
         }
 
@@ -97,7 +97,7 @@ namespace CityGenerator.StreetGraph {
 
         }
 
-        IEnumerator GrowStreamlines(List<HyperStreamline> streamlines, bool useMajorEigenVectors) {
+        IEnumerator GrowStreamlines(List<HyperStreamline> streamlines, bool useMajorEigenVectors, bool showDebug) {
             // this keeps track of which streamlines are still going, it starts off the same as the list of streamlines
             Queue<HyperStreamline> unfinishedStreamlines = new Queue<HyperStreamline>(streamlines);
 
@@ -169,7 +169,7 @@ namespace CityGenerator.StreetGraph {
 
                 yield return null;
 
-                Debug.Log($"Completed streamline, {unfinishedStreamlines.Count} streamlines left");
+                if (showDebug) Debug.Log($"CityGenerator - HyperStreamlineGenerator: Completed streamline, {unfinishedStreamlines.Count} streamlines left");
 
             }
         }

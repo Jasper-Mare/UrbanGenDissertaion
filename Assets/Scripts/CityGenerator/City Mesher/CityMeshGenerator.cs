@@ -34,12 +34,12 @@ namespace CityGenerator.MeshUtilities {
             CityRoot = new GameObject("City");
         }
 
-        public IEnumerator Run(MonoBehaviour runner) {
+        public IEnumerator Run(MonoBehaviour runner, bool showDebug) {
 
             yield return null;
-            Debug.Log("Started building roads");
+            if (showDebug) Debug.Log("CityGenerator - CityMeshGenerator: Started building roads");
             yield return runner.StartCoroutine(MakeRoads());
-            Debug.Log("Done building roads");
+            if (showDebug) Debug.Log("CityGenerator - CityMeshGenerator: Done building roads");
 
         }
 

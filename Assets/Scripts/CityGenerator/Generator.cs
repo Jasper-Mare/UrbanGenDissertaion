@@ -90,7 +90,7 @@ namespace CityGenerator {
             }
 
             streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
-            yield return runner.StartCoroutine(streamlineGenerator.Run(runner));
+            yield return runner.StartCoroutine(streamlineGenerator.Run(runner, showDebug));
             yield return null;
 
             if (showDebug) {
@@ -103,7 +103,7 @@ namespace CityGenerator {
             streamlines.AddRange(streamlineGenerator.minorStreamlines);
 
             bridger = new BridgeDesignator(streamlineGenerator.majorStreamlines, streamlineGenerator.minorStreamlines, bridgeProportion, template, seed);
-            yield return runner.StartCoroutine(bridger.Run(runner));
+            yield return runner.StartCoroutine(bridger.Run(runner, showDebug));
             yield return null;
 
             if (showDebug) {
@@ -115,7 +115,7 @@ namespace CityGenerator {
             List<Bridge> bridges = bridger.bridges;
 
             meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
-            yield return runner.StartCoroutine(meshGenerator.Run(runner));
+            yield return runner.StartCoroutine(meshGenerator.Run(runner, showDebug));
             CityRoot = meshGenerator.CityRoot;
 
             if (showDebug) {

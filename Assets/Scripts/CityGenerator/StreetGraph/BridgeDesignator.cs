@@ -33,19 +33,19 @@ namespace CityGenerator.StreetGraph {
             this.bridgeProportion = bridgeProportion;
         }
 
-        public IEnumerator Run(MonoBehaviour runner) {
+        public IEnumerator Run(MonoBehaviour runner, bool showDebug) {
 
             // identify intersections
             yield return null;
-            Debug.Log("Started identifying intersections");
+            if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Started identifying intersections");
             yield return runner.StartCoroutine(FindIntersections());
-            Debug.Log($"Done identifying intersections");
+            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying intersections");
 
             // build bridges
             yield return null;
-            Debug.Log("Started identifying bridges");
+            if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Started identifying bridges");
             yield return runner.StartCoroutine(IdentifyBridges(runner));
-            Debug.Log($"Done identifying bridges");
+            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying bridges");
         }
 
         IEnumerator FindIntersections() {
