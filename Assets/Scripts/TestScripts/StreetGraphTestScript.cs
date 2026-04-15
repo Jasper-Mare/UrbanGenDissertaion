@@ -113,12 +113,12 @@ public class StreetGraphTestScript : MonoBehaviour {
 
         Debug.Log("Running HyperStreamlineGenerator");
         generator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
-        yield return StartCoroutine(generator.Run(this));
+        yield return StartCoroutine(generator.Run(this, true));
         yield return null;
 
         Debug.Log("Running BridgeDesignator");
         bridger = new BridgeDesignator(generator.majorStreamlines, generator.minorStreamlines, bridgeProportion, template, seed);
-        yield return StartCoroutine(bridger.Run(this));
+        yield return StartCoroutine(bridger.Run(this, true));
         yield return null;
     }
 
