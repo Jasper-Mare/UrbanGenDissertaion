@@ -39,19 +39,21 @@ public class CityMesherTestScript : MonoBehaviour {
     float seedDensityCount = 1f;
     [SerializeField]
     float seedDensityLength = 1f;
+
+    [Header("Bridge Designator Properties")]
     [SerializeField]
     [Range(0, 1)]
     float bridgeProportion = 0.1f;
-
-    [Header("Mesh Generator Properties")]
-    [SerializeField]
-    Material templateMaterial;
     [SerializeField]
     float bridgeMaximumSteepness = 1;
     [SerializeField]
     float bridgeHeight = 3f;
     [SerializeField]
     float intersectionMinimumRadius = 3f;
+
+    [Header("Mesh Generator Properties")]
+    [SerializeField]
+    Material templateMaterial;
 
     float2 position = float2.zero;
 
