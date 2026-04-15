@@ -2,7 +2,9 @@
 using UnityEngine;
 
 namespace CityGenerator.Templates {
-    public class NetworkElementTemplate {
+
+    [CreateAssetMenu(fileName = "NewTemplate", menuName = "CityGenerator/NetworkElementTemplate", order = 1)]
+    public class NetworkElementTemplate : ScriptableObject {
 
         public OutlineShape outline;
         public Material roadMaterial;
@@ -16,3 +18,5 @@ namespace CityGenerator.Templates {
 
     }
 }
+
+// https://docs.unity3d.com/6000.3/Documentation/Manual/class-ScriptableObject.html

@@ -13,23 +13,25 @@ namespace CityGenerator.MeshUtilities {
 
         Random rng;
         NetworkElementTemplate streetTemplate;
+        float groundHeight;
 
-        List<HyperStreamline> inStreamlines;
-        List<HyperStreamlineIntersection> inIntersections;
-        List<Bridge> inBridges;
+        List<HyperStreamline> streamlines;
+        List<HyperStreamlineIntersection> intersections;
+        List<Bridge> bridges;
 
         public List<System.Tuple<UnityEngine.Vector3, string>> DebugInfo3D = new List<System.Tuple<UnityEngine.Vector3, string>>();
 
         public GameObject CityRoot;
 
-        public CityMeshGenerator(uint randomSeed, NetworkElementTemplate template, List<HyperStreamline> streamlines, List<HyperStreamlineIntersection> intersections, List<Bridge> bridges) {
+        public CityMeshGenerator(uint randomSeed, NetworkElementTemplate template, List<HyperStreamline> streamlines, List<HyperStreamlineIntersection> intersections, List<Bridge> bridges, float groundHeight) {
             rng = new Random(randomSeed);
             streetTemplate = template;
+            this.groundHeight=groundHeight;
 
             // these come from the previous generation stage
-            this.inStreamlines = streamlines;
-            this.inIntersections = intersections;
-            this.inBridges = bridges;
+            this.streamlines = streamlines;
+            this.intersections = intersections;
+            this.bridges = bridges;
 
             CityRoot = new GameObject("City");
         }
@@ -44,7 +46,7 @@ namespace CityGenerator.MeshUtilities {
         }
 
         IEnumerator MakeRoads() {
-            foreach (HyperStreamline streamline in inStreamlines) {
+            foreach (HyperStreamline streamline in streamlines) {
                 // discard all lines made of only one point or less
                 if (streamline.points.Count <= 1) {
                     continue;
@@ -56,7 +58,7 @@ namespace CityGenerator.MeshUtilities {
                 ).ToList();
 
                 // get bridges on this streamline
-                List<Bridge> streamlineBridges = inBridges.Where(x => x.streamline == streamline).ToList();
+                List<Bridge> streamlineBridges = bridges.Where(x => x.streamline == streamline).ToList();
 
                 // basic approach, turn the streamline points into oriented points, then make basic meshes on them
                 OrientedPoint[] points = new OrientedPoint[streamline.points.Count];
@@ -132,7 +134,7 @@ namespace CityGenerator.MeshUtilities {
             // if the current streamline has no bridges then all points will be at 0
             if (bridges.Count == 0) {
                 DebugInfo3D.Add(System.Tuple.Create(debugPos, "floor"));
-                return 0;
+                return groundHeight;
             } else {
                 // otherwise find which bridge we are in
                 currentBridge = bridges.Where(
@@ -172,7 +174,7 @@ namespace CityGenerator.MeshUtilities {
                         // we're in the ramp size
                         height = streetTemplate.bridgingHeight * math.smoothstep(
                             rampLength,
-                            0,
+                            groundHeight,
                             leftDist
                         );
                     }
@@ -188,7 +190,7 @@ namespace CityGenerator.MeshUtilities {
                         // we're in the ramp size
                         height = streetTemplate.bridgingHeight * math.smoothstep(
                             rampLength,
-                            0,
+                            groundHeight,
                             rightDist
                         );
                     }

@@ -27,8 +27,10 @@ namespace CityGenerator {
         float minSeperation;
         float lookAheadDist;
         float seedDensity;
+
         float bridgeProportion;
         NetworkElementTemplate template;
+        float groundHeight;
 
         uint seed;
 
@@ -46,6 +48,7 @@ namespace CityGenerator {
             float seedDensity,
             float bridgeProportion,
             NetworkElementTemplate template,
+            float groundHeight,
             uint seed
         ) {
             this.mesh = mesh;
@@ -64,9 +67,9 @@ namespace CityGenerator {
             this.bridgeProportion = bridgeProportion;
             this.template = template;
 
+            this.groundHeight = groundHeight;
+
             this.seed = seed;
-
-
 
             CityRoot = null;
         }
@@ -114,7 +117,7 @@ namespace CityGenerator {
             List<HyperStreamlineIntersection> intersections = bridger.intersections;
             List<Bridge> bridges = bridger.bridges;
 
-            meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges);
+            meshGenerator = new CityMeshGenerator(seed, template, streamlines, intersections, bridges, groundHeight);
             yield return runner.StartCoroutine(meshGenerator.Run(runner, showDebug));
             CityRoot = meshGenerator.CityRoot;
 

@@ -487,15 +487,15 @@ MonoBehaviour:
   numIterations: 16
   decayConstant: 0.0001
   maxLength: 500
-  minSeperation: 10
-  lookAheadDist: 15
-  seedDensityCount: 5
+  minSeparation: 1
+  seedDensityCount: 6
   seedDensityLength: 1000
   bridgeProportion: 0.4
   bridgeMaximumSteepness: 0.1
   bridgeHeight: 3
   intersectionMinimumRadius: 3
-  templateMaterial: {fileID: 2100000, guid: 25fceae29c7013748bf157df1d261037, type: 2}
+  groundHeight: 0
+  template: {fileID: 11400000, guid: 38c14f65b5262c6448b215e136468a49, type: 2}
 --- !u!1 &1778080571
 GameObject:
   m_ObjectHideFlags: 0

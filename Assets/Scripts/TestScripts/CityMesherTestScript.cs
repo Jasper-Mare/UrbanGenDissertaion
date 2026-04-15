@@ -32,7 +32,7 @@ public class CityMesherTestScript : MonoBehaviour {
     [SerializeField]
     float maxLength = 50;
     [SerializeField]
-    float minSeperation = 1;
+    float minSeparation = 1;
     //[SerializeField]
     float lookAheadDist = 5;
     [SerializeField]
@@ -45,21 +45,15 @@ public class CityMesherTestScript : MonoBehaviour {
     [Range(0, 1)]
     float bridgeProportion = 0.1f;
     [SerializeField]
-    float bridgeMaximumSteepness = 1;
-    [SerializeField]
-    float bridgeHeight = 3f;
-    [SerializeField]
-    float intersectionMinimumRadius = 3f;
+    NetworkElementTemplate template;
 
     [Header("Mesh Generator Properties")]
     [SerializeField]
-    Material templateMaterial;
+    float groundHeight = 0f;
 
     float2 position = float2.zero;
 
     private GameObject CityRoot;
-
-    NetworkElementTemplate template = new NetworkElementTemplate();
 
     float seedDensity {
         get {
@@ -74,47 +68,6 @@ public class CityMesherTestScript : MonoBehaviour {
 
         Vector3 pos3d = transform.position;
         position = new float2(pos3d.x, pos3d.z);
-
-        template.maximumSteepness = bridgeMaximumSteepness;
-        template.minimumIntersectionRadius = intersectionMinimumRadius;
-        template.bridgingHeight = bridgeHeight;
-
-        /*
-
-        O=========O
-        |         |
-        O         O
-         \       /
-          O-----O
-
-        */
-        template.outline = new OutlineShape(
-            new Vector2[] {
-                new(1, 0.1f), new(-1, 0.1f), // top edge
-                new(-1, 0.1f), new(-1, -0.3f), new(-0.75f, -0.5f), // left edge
-                new(-0.75f, -0.5f), new(0.75f, -0.5f), // bottom edge
-                new(0.75f, -0.5f), new(1, -0.3f), new(1, 0.1f), // right edge
-            },
-            new Vector2[] {
-                new(0, 1), new(0, 1), // top edge
-                new(-1, 0), new(-0.89f, -0.45f), new(-0.45f, -0.89f), // left edge
-                new(0, -1), new(0, -1), // bottom edge
-                new(0.45f, -0.89f), new(0.89f, -0.45f), new(1, 0), // right edge
-            },
-            new float[] {
-                0.0f, 0.5f, // top edge (road)
-                0.5f, 0.57f, 0.62f, // left edge (concrete)
-                0.62f, 0.88f, // bottom edge (concrete)
-                0.88f, 0.93f, 1.0f // right edge (concrete)
-            },
-            new int[] {
-                0,1, // top
-                2,3, 3,4, // left
-                5,6, // bottom
-                7,8, 8,9 // right
-            }
-        );
-        template.roadMaterial = templateMaterial;
 
         shouldRegenerate = true;
     }
@@ -145,8 +98,8 @@ public class CityMesherTestScript : MonoBehaviour {
 
         gen = new Generator(mesh, visMatInstance, position, size,
             numberOfTensors, numIterations, decayConstant,
-            maxLength, minSeperation, lookAheadDist, seedDensity,
-            bridgeProportion, template, seed
+            maxLength, minSeparation, lookAheadDist, seedDensity,
+            bridgeProportion, template, groundHeight, seed
         );
 
         yield return StartCoroutine(gen.Run(this, true));

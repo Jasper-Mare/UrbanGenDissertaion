@@ -2,14 +2,19 @@
 
 namespace CityGenerator.MeshUtilities {
     // my code based on [1]
-    public struct OutlineShape {
-        public readonly Vector2[] points;
-        public readonly Vector2[] normals;
-        public readonly float[] textureCoords;
-        public readonly int[] edges;
-        public readonly float textureWidth;
+    [CreateAssetMenu(fileName = "NewOutline", menuName = "CityGenerator/OutlineShape", order = 2)]
+    public class OutlineShape : ScriptableObject {
+        public Vector2[] points;
+        public Vector2[] normals;
+        public float[] textureCoords;
+        public int[] edges;
+        public float textureWidth;
 
         public OutlineShape(Vector2[] points, Vector2[] pointNormals, float[] textureUs, int[] edgePairs) {
+            Setup(points, pointNormals, textureUs, edgePairs);
+        }
+
+        public void Setup(Vector2[] points, Vector2[] pointNormals, float[] textureUs, int[] edgePairs) {
             this.points = points;
             normals = pointNormals;
             textureCoords = textureUs;
@@ -22,8 +27,8 @@ namespace CityGenerator.MeshUtilities {
 
                 textureWidth += (points[p1] - points[p2]).magnitude;
             }
-
         }
+
     }
 
 }
