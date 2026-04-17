@@ -75,14 +75,18 @@ namespace CityGenerator {
         }
 
         public IEnumerator Run(MonoBehaviour runner, bool showDebug) {
+            float startTime = Time.realtimeSinceStartup;
 
             if (showDebug) {
                 Debug.Log("CityGenerator: Begining Generation");
                 Debug.Log("CityGenerator: Running TensorFieldGenerator");
+
             }
 
             TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
             yield return null;
+
+            float tensorFieldDoneTime = Time.realtimeSinceStartup;
 
             if (showDebug) {
                 MeshCreator.CreatePlane(mesh, size.x, size.y, 1, 1);
@@ -95,6 +99,8 @@ namespace CityGenerator {
             streamlineGenerator = new HyperStreamlineGenerator(field, maxLength, minSeperation, lookAheadDist, seedDensity, seed);
             yield return runner.StartCoroutine(streamlineGenerator.Run(runner, showDebug));
             yield return null;
+
+            float streamlineDoneTime = Time.realtimeSinceStartup;
 
             if (showDebug) {
                 Debug.Log("CityGenerator: HyperStreamlineGenerator Completed");
@@ -109,6 +115,8 @@ namespace CityGenerator {
             yield return runner.StartCoroutine(bridger.Run(runner, showDebug));
             yield return null;
 
+            float bridgerDoneTime = Time.realtimeSinceStartup;
+
             if (showDebug) {
                 Debug.Log("CityGenerator: BridgeDesignator Completed");
                 Debug.Log("CityGenerator: Running CityMeshGenerator");
@@ -121,9 +129,17 @@ namespace CityGenerator {
             yield return runner.StartCoroutine(meshGenerator.Run(runner, showDebug));
             CityRoot = meshGenerator.CityRoot;
 
+            float meshDoneTime = Time.realtimeSinceStartup;
+
             if (showDebug) {
                 Debug.Log("CityGenerator: CityMeshGenerator Completed");
                 Debug.Log("CityGenerator: Completed Generation");
+                Debug.Log($"CityGenerator: Durations: \n Tensor {tensorFieldDoneTime - startTime}s" +
+                    $"\n Streamline {streamlineDoneTime - tensorFieldDoneTime}s" +
+                    $"\n Bridger {bridgerDoneTime - streamlineDoneTime}s" +
+                    $"\n Mesher {meshDoneTime - bridgerDoneTime}s" +
+                    $"\n Complete {meshDoneTime - startTime}s"
+                );
             }
         }
 
