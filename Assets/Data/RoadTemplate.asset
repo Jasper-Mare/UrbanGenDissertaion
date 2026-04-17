@@ -15,5 +15,5 @@ MonoBehaviour:
   outline: {fileID: 11400000, guid: e6284abd37792b540afa334d4e9c1718, type: 2}
   roadMaterial: {fileID: 2100000, guid: 25fceae29c7013748bf157df1d261037, type: 2}
   maximumSteepness: 0.1
-  minimumIntersectionRadius: 3
-  bridgingHeight: 3
+  minimumIntersectionRadius: 7
+  bridgingHeight: 4.5
