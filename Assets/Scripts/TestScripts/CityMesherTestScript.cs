@@ -3,12 +3,13 @@ using CityGenerator.MeshUtilities;
 using CityGenerator.Templates;
 using System.Collections;
 using Unity.Mathematics;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer), typeof(UniqueMesh))]
 public class CityMesherTestScript : MonoBehaviour {
-    [SerializeField]
-    bool shouldRegenerate = false;
+    bool shouldRegenerate;
     [SerializeField]
     uint generatorSeed = 0;
 
@@ -69,7 +70,7 @@ public class CityMesherTestScript : MonoBehaviour {
         Vector3 pos3d = transform.position;
         position = new float2(pos3d.x, pos3d.z);
 
-        shouldRegenerate = true;
+        shouldRegenerate = false;
     }
 
     void Update() {
@@ -116,4 +117,27 @@ public class CityMesherTestScript : MonoBehaviour {
             gen.DrawDebugGizmos();
         }
     }
+
+    // Based off [1]
+    [CustomEditor(typeof(CityMesherTestScript))]
+    class CityMesherTestScriptEditor : Editor {
+        public override void OnInspectorGUI() {
+            DrawDefaultInspector();
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Generate")) {
+                CityMesherTestScript testScript = target.GetComponent<CityMesherTestScript>();
+                testScript.shouldRegenerate = true;
+            }
+
+            GUILayout.Space(10);
+
+        }
+    }
+
 }
+
+/* References:
+[1] https://discussions.unity.com/t/create-a-button-in-the-inspector/22432/3
+*/

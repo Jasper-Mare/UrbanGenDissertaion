@@ -80,7 +80,6 @@ namespace CityGenerator {
             if (showDebug) {
                 Debug.Log("CityGenerator: Begining Generation");
                 Debug.Log("CityGenerator: Running TensorFieldGenerator");
-
             }
 
             TensorField field = TensorFieldGenerator.Generate(position, size, numberOfTensors, numIterations, decayConstant, seed);
