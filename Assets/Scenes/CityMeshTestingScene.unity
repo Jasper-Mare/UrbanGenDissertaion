@@ -661,8 +661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dea6fb0ab5d18594780f3bdaa7b91373, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CityMesherTestScript
-  shouldRegenerate: 0
-  generatorSeed: 4210071580
+  generatorSeed: 3141926662
   size:
     x: 1000
     y: 1000

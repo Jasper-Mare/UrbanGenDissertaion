@@ -121,14 +121,25 @@ public class CityMesherTestScript : MonoBehaviour {
     // Based off [1]
     [CustomEditor(typeof(CityMesherTestScript))]
     class CityMesherTestScriptEditor : Editor {
+        uint[] presetSeeds = { 2062642677, 4064720178, 4210071580, 3141926662, 1585897645 };
+        int seedNum = 1;
+
         public override void OnInspectorGUI() {
+            CityMesherTestScript testScript = target.GetComponent<CityMesherTestScript>();
+
             DrawDefaultInspector();
 
             GUILayout.Space(10);
 
             if (GUILayout.Button("Generate")) {
-                CityMesherTestScript testScript = target.GetComponent<CityMesherTestScript>();
                 testScript.shouldRegenerate = true;
+            }
+
+            GUILayout.Space(10);
+
+            seedNum = EditorGUILayout.IntSlider("Preset Test Seed", seedNum, 1, 5);
+            if (GUILayout.Button("Load Preset Test Seed")) {
+                testScript.generatorSeed = presetSeeds[seedNum - 1];
             }
 
             GUILayout.Space(10);
