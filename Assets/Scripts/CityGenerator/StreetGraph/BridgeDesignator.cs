@@ -39,13 +39,13 @@ namespace CityGenerator.StreetGraph {
             yield return null;
             if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Started identifying intersections");
             yield return runner.StartCoroutine(FindIntersections());
-            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying intersections");
+            if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Done identifying intersections");
 
             // build bridges
             yield return null;
             if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Started identifying bridges");
             yield return runner.StartCoroutine(IdentifyBridges(runner));
-            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying bridges");
+            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying bridges {intersections.Count} intersections found.");
         }
 
         IEnumerator FindIntersections() {
