@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 using IEnumerator = System.Collections.IEnumerator;
 using MonoBehaviour = UnityEngine.MonoBehaviour;
@@ -35,17 +36,26 @@ namespace CityGenerator.StreetGraph {
 
         public IEnumerator Run(MonoBehaviour runner, bool showDebug) {
 
+            float startTime = Time.realtimeSinceStartup;
+
             // identify intersections
             yield return null;
             if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Started identifying intersections");
             yield return runner.StartCoroutine(FindIntersections());
-            if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Done identifying intersections");
+            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying intersections, {intersections.Count} intersections found.");
+
+            float intersectionTime = Time.realtimeSinceStartup;
 
             // build bridges
             yield return null;
             if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Started identifying bridges");
             yield return runner.StartCoroutine(IdentifyBridges(runner));
-            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Done identifying bridges {intersections.Count} intersections found.");
+            float bridgeTime = Time.realtimeSinceStartup;
+            if (showDebug) Debug.Log("CityGenerator - BridgeDesignator: Done identifying bridges");
+
+            if (showDebug) Debug.Log($"CityGenerator - BridgeDesignator: Durations:\n" +
+                $"Intersection Identifying: {intersectionTime - startTime}s\n" +
+                $"Bridge Identifying: {bridgeTime - intersectionTime}");
         }
 
         IEnumerator FindIntersections() {
