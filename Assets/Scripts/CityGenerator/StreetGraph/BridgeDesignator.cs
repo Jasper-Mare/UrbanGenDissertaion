@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
-using UnityEngine;
 using Debug = UnityEngine.Debug;
 using IEnumerator = System.Collections.IEnumerator;
 using MonoBehaviour = UnityEngine.MonoBehaviour;
+using Time = UnityEngine.Time;
 
 namespace CityGenerator.StreetGraph {
     class BridgeDesignator {
