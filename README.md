@@ -1,4 +1,4 @@
-# UrbanGenDissertaion
+# UrbanGenDissertation
 
 This is the repository for my university undergrad dissertation project.
 This project is/was being developed in my 3rd year at the University Of Exeter from 2025 to 2026.
