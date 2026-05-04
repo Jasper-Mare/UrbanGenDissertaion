@@ -117,7 +117,7 @@ namespace CityGenerator.StreetGraph {
             // loop over all the intersections
             for (int iBridge = 0; iBridge < numBridges; iBridge++) {
                 // find the intersection to turn into a bridge
-                int iIntersection = (int)(iBridge * bridgeProportion);
+                int iIntersection = (int)(iBridge / bridgeProportion);
                 HyperStreamlineIntersection intersection = intersections[iIntersection];
 
                 // make a bridge around that intersection
